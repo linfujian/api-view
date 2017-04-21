@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
-<title>Query Page</title>
+<title>查询</title>
  <link rel="stylesheet"
 		href='<c:url value="/web-resources/lib/bootstrap-3.3.7/css/bootstrap.min.css" />'>
  <link rel="stylesheet"
