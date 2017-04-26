@@ -28,7 +28,7 @@ public class ApiViewController {
 	
 	@RequestMapping(value="/")
 	public String Query() {
-		return "/query";
+		return "/querySelect";
 	}
 	
 	@RequestMapping("/range")
