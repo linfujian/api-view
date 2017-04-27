@@ -32,21 +32,25 @@ public class PointDaoImpl implements PointDao {
 	
 	//count
 	public BigInteger count(String sampleId, String chr, int start, int end) {
+		if(chr.contains("chr"))
+			chr = chr.substring(3);
+		
 		SQLQuery query = getSession().createSQLQuery("SELECT count(*) FROM sampleinfor sample WHERE sample.SAMPLE = :sample AND sample.CHROM = :chr AND sample.POS BETWEEN :start AND :end AND LENGTH(sample.REF)=1 AND LENGTH(sample.ALT)=1");
-		return (BigInteger)query.setString("sample", sampleId).setString("chr", chr).setInteger("start", start).setInteger("end", end).uniqueResult();
+		return (BigInteger)query.setString("sample", sampleId).setString("chr", "chr" + chr).setInteger("start", start).setInteger("end", end).uniqueResult();
 	}
 	//return pointInfors satisified with conditions
 	public List<AFPoint> listAF(String sampleId, String chr, int start, int end,Integer offset, Integer maxResults) {
-		
-		SQLQuery query = getSession().createSQLQuery("SELECT sample.CHROM,sample.POS,sample.REF,sample.ALT,gno.AF_GNOMAD AS AF_gno_genome,exo.AF_GNOMAD AS AF_gno_exome, 1kg.AF_EAS AS AF_EAS_1kg, esp.AF_ALL AS AF_ALL_esp, exac.EXAC_ALL AS AF_ALL_exac, annovar.SIFT_score AS SIFT_score, annovar.Polyphen2_HDIV_score as Polyphen2_HDIV_score, clinvar.CLNSIG AS CLNSIG_clinvar FROM sampleinfor sample LEFT JOIN gno" + chr + " gno ON (sample.CHROM = gno.CHROM AND sample.POS = gno.POS AND sample.REF = gno.REF AND sample.ALT = gno.ALT) LEFT JOIN exo" + chr + " exo ON (sample.CHROM = exo.CHROM AND sample.POS = exo.POS AND sample.REF = exo.REF AND sample.ALT = exo.ALT) LEFT JOIN hg38_1kg 1kg ON (sample.CHROM = 1kg.CHROM AND sample.POS = 1kg.POS AND sample.REF = 1kg.REF AND sample.ALT = 1kg.OBS) LEFT JOIN hg38_esp esp ON (sample.CHROM = esp.CHROM AND sample.POS = esp.START AND sample.POS = esp.END AND sample.REF = esp.REF AND sample.ALT = esp.ALT) LEFT JOIN hg38_exac exac ON (sample.CHROM = exac.CHROM AND sample.POS = exac.START AND sample.POS = exac.END AND sample.REF = exac.REF AND sample.ALT = exac.ALT) LEFT JOIN hg38_annovar annovar ON (sample.CHROM = annovar.CHROM AND sample.POS = annovar.START AND sample.POS = annovar.END AND sample.REF = annovar.REF AND sample.ALT = annovar.ALT) LEFT JOIN clinvar ON (sample.CHROM = clinvar.CHROM AND sample.POS = clinvar.START_POINT AND sample.POS = clinvar.END_POINT AND sample.REF = clinvar.REF AND sample.ALT = clinvar.ALT) WHERE sample.SAMPLE = :sample AND sample.CHROM = :chr AND sample.POS BETWEEN :start AND :end AND LENGTH(sample.REF)=1 AND LENGTH(sample.ALT)=1").addEntity(AFPoint.class);
-		List<AFPoint> afPointInfors = query.setString("sample", sampleId).setString("chr", chr).setInteger("start", start).setInteger("end", end).setFirstResult(offset!=null?offset:0).setMaxResults(maxResults!=null?maxResults:10).list();
+		if(chr.contains("chr"))
+			chr = chr.substring(3);
+		SQLQuery query = getSession().createSQLQuery("SELECT sample.CHROM,sample.POS,sample.REF,sample.ALT,gno.AF_GNOMAD AS AF_gno_genome,exo.AF_GNOMAD AS AF_gno_exome, 1kg.AF_EAS AS AF_EAS_1kg, esp.AF_ALL AS AF_ALL_esp, exac.EXAC_ALL AS AF_ALL_exac, annovar.SIFT_score AS SIFT_score, annovar.Polyphen2_HDIV_score as Polyphen2_HDIV_score, clinvar.CLNSIG AS CLNSIG_clinvar FROM sampleinfor sample LEFT JOIN gnochr" + chr + " gno ON (sample.CHROM = gno.CHROM AND sample.POS = gno.POS AND sample.REF = gno.REF AND sample.ALT = gno.ALT) LEFT JOIN exochr" + chr + " exo ON (sample.CHROM = exo.CHROM AND sample.POS = exo.POS AND sample.REF = exo.REF AND sample.ALT = exo.ALT) LEFT JOIN hg38_1kg 1kg ON (sample.CHROM = 1kg.CHROM AND sample.POS = 1kg.POS AND sample.REF = 1kg.REF AND sample.ALT = 1kg.OBS) LEFT JOIN hg38_esp esp ON (sample.CHROM = esp.CHROM AND sample.POS = esp.START AND sample.POS = esp.END AND sample.REF = esp.REF AND sample.ALT = esp.ALT) LEFT JOIN hg38_exac exac ON (sample.CHROM = exac.CHROM AND sample.POS = exac.START AND sample.POS = exac.END AND sample.REF = exac.REF AND sample.ALT = exac.ALT) LEFT JOIN hg38_annovar annovar ON (sample.CHROM = annovar.CHROM AND sample.POS = annovar.START AND sample.POS = annovar.END AND sample.REF = annovar.REF AND sample.ALT = annovar.ALT) LEFT JOIN clinvar ON (sample.CHROM = clinvar.CHROM AND sample.POS = clinvar.START_POINT AND sample.POS = clinvar.END_POINT AND sample.REF = clinvar.REF AND sample.ALT = clinvar.ALT) WHERE sample.SAMPLE = :sample AND sample.CHROM = :chr AND sample.POS BETWEEN :start AND :end AND LENGTH(sample.REF)=1 AND LENGTH(sample.ALT)=1").addEntity(AFPoint.class);
+		List<AFPoint> afPointInfors = query.setString("sample", sampleId).setString("chr", "chr" + chr).setInteger("start", start).setInteger("end", end).setFirstResult(offset!=null?offset:0).setMaxResults(maxResults!=null?maxResults:10).list();
+		afPointInfors = (List<AFPoint>) (afPointInfors.isEmpty()? new ArrayList() : afPointInfors); 
 		
 		/*for(Iterator<AFPoint> iterator = afPointInfors.iterator(); iterator.hasNext();) {
 			AFPoint afPoint = iterator.next();
 			if((afPoint.getREF().length() != 1) && (afPoint.getALT().length() != 1))
 				iterator.remove();
 		}*/
-		
 		return afPointInfors;
 	}
 	

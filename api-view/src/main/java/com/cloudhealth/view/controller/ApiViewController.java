@@ -33,7 +33,7 @@ public class ApiViewController {
 	}
 	
 	@RequestMapping("/range")
-	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam("chr") String chr, @RequestParam("start") int start, @RequestParam("end") int end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, @RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("list", pointService.listAFPoints(sample, chr, start, end,offset,maxResult));
 		map.put("page", pointService.count(sample, chr, start, end));

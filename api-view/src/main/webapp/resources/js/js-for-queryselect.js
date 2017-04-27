@@ -44,7 +44,7 @@ $(document).ready(function() {
 			url:'range',
 			data: {
 				"sample": $('#input_sample').val(),
-				"chr": 'chr' + $('#range_chr').val(),
+				"chr": $('#range_chr').val(),
 				"start": $('#range_start').val(),
 				"end": $('#range_end').val(),
 				"offset":0,
@@ -134,48 +134,55 @@ $(document).ready(function() {
 		} else {
 			constructTable(msg);
 			$('#page').val(msg.page);
-			
+	
+			$('#page-selection').empty();
 			$('#page-selection').bootpag({
 				total: Math.ceil($('#page').val()/20),
 				page:1,
 				maxVisible:10
-			}).on('page',function(event,num){
-				var queryType = $('#queryType').val();
-				switch(queryType) {
-					case 'range_query':
-						sendAjaxForPage('range',
-								{
-							"sample": $('#input_sample').val(),
-							"chr": 'chr' + $('#range_chr').val(),
-							"start": $('#range_start').val(),
-							"end": $('#range_end').val(),
-							"offset":(num-1)*20,
-							"maxResults":20
-						});
-					break;
-					case 'symbol_query':
-						sendAjaxForPage('symbol',
-								{
-							"symbol":$('#symbol').val(),
-							"sample":$('#input_sample').val(),
-							"offset":(num-1)*20,
-							"maxResults":20
-								});
-					break;
-					case 'nm_query':
-						sendAjaxForPage('nm',
-								{
-							"sample":$('#input_sample').val(),
-							"nm":$('#nm').val(),
-							"offset":(num-1)*20,
-							"maxResults":20
-								});
-					break;
-				}
 			});
 			
 		}
 	}
+	
+	$('#page-selection').bootpag({
+		total: Math.ceil($('#page').val()/20),
+		page:1,
+		maxVisible:10
+	}).on('page',function(event,num){
+		var queryType = $('#queryType').val();
+		switch(queryType) {
+			case 'range_query':
+				sendAjaxForPage('range',
+						{
+					"sample": $('#input_sample').val(),
+					"chr": $('#range_chr').val(),
+					"start": $('#range_start').val(),
+					"end": $('#range_end').val(),
+					"offset":(num-1)*20,
+					"maxResults":20
+				});
+			break;
+			case 'symbol_query':
+				sendAjaxForPage('symbol',
+						{
+					"symbol":$('#symbol').val(),
+					"sample":$('#input_sample').val(),
+					"offset":(num-1)*20,
+					"maxResults":20
+						});
+			break;
+			case 'nm_query':
+				sendAjaxForPage('nm',
+						{
+					"sample":$('#input_sample').val(),
+					"nm":$('#nm').val(),
+					"offset":(num-1)*20,
+					"maxResults":20
+						});
+			break;
+		}
+	});
 
 	function errorCallBack(errorMsg) {
 		var msg = '';
