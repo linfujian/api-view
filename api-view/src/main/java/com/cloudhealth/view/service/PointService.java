@@ -1,5 +1,6 @@
 package com.cloudhealth.view.service;
 
+import java.math.BigInteger;
 import java.util.List;
 import com.cloudhealth.view.model.AFPoint;
 import com.cloudhealth.view.model.AnnovarPoint;
@@ -12,7 +13,9 @@ import com.cloudhealth.view.model.OnekgPoint;
 
 public interface PointService {
 	
-	public List<AFPoint> listAFPoints(String sampleId, String chr, int start, int end);
+	public List<AFPoint> listAFPoints(String sampleId, String chr, int start, int end,Integer offset,Integer maxResults);
+	
+	public BigInteger count(String sampleId, String chr, int start,int end);
 	
 	public GnoGenomePoint queryGnoGenPoint(String chr,int pos,String ref,String alt);
 	
@@ -28,7 +31,11 @@ public interface PointService {
 	
 	public ClinvarPoint queryClinvarPoint(String chr, int start, int end, String ref, String alt);
 	
-	public List<AFPoint> listAFPoints(String sampleId,String symbol);
+	public List<AFPoint> listAFPoints(String sampleId,String symbol,Integer offset, Integer maxResults);
 	
-	public List<AFPoint> listAFPointsByNm(String sampleId,String nm);
+	public BigInteger count(String sampleId, String symbol); 
+	
+	public List<AFPoint> listAFPointsByNm(String sampleId,String nm,Integer offset, Integer maxResults);
+
+	public BigInteger countByNm(String sampleId, String nm);
 }

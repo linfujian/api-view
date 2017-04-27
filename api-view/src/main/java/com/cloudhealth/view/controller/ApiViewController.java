@@ -1,5 +1,6 @@
 package com.cloudhealth.view.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,18 +33,27 @@ public class ApiViewController {
 	}
 	
 	@RequestMapping("/range")
-	public @ResponseBody List<AFPoint> listAFPoints(@RequestParam("sample") String sample, @RequestParam("chr") String chr, @RequestParam("start") int start, @RequestParam("end") int end) {
-		return pointService.listAFPoints(sample, chr, start, end);
+	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam("chr") String chr, @RequestParam("start") int start, @RequestParam("end") int end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("list", pointService.listAFPoints(sample, chr, start, end,offset,maxResult));
+		map.put("page", pointService.count(sample, chr, start, end));
+		return map;
 	}
 	
 	@RequestMapping("/symbol")
-	public @ResponseBody List<AFPoint> listAFPoint(@RequestParam("sample") String sample,@RequestParam("symbol") String symbol) {
-		return pointService.listAFPoints(sample, symbol);
+	public @ResponseBody HashMap<String, Object> listAFPoint(@RequestParam("sample") String sample,@RequestParam("symbol") String symbol,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("list", pointService.listAFPoints(sample, symbol,offset,maxResult));
+		map.put("page", pointService.count(sample, symbol));
+		return map;
 	}
 	
 	@RequestMapping("/nm")
-	public @ResponseBody List<AFPoint> listAFPointByNm(@RequestParam("sample") String sample, @RequestParam("nm") String nm) {
-		return pointService.listAFPointsByNm(sample, nm);
+	public @ResponseBody HashMap<String, Object> listAFPointByNm(@RequestParam("sample") String sample, @RequestParam("nm") String nm,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("list", pointService.listAFPointsByNm(sample, nm,offset,maxResult));
+		map.put("page", pointService.countByNm(sample, nm));
+		return map;
 	}
 	
 	@RequestMapping("/gno_gen/{chr}/{pos}/{ref}/{alt}")

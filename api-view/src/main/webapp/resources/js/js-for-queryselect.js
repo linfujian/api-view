@@ -35,7 +35,9 @@ $(document).ready(function() {
 		}
 	}
 	
+	
 	$(document).on('click','#range_query',function() {
+		$('#queryType').val('range_query');
 		$.ajax({
 			type:'GET',
 			dataType:'json',
@@ -44,7 +46,9 @@ $(document).ready(function() {
 				"sample": $('#input_sample').val(),
 				"chr": 'chr' + $('#range_chr').val(),
 				"start": $('#range_start').val(),
-				"end": $('#range_end').val()
+				"end": $('#range_end').val(),
+				"offset":0,
+				"maxResults":20
 			},
 			
 			success: function(msg) {
@@ -58,13 +62,16 @@ $(document).ready(function() {
 	});	
 
 	$(document).on('click', '#symbol_query', function() {
+		$('#queryType').val('symbol_query');
 		$.ajax({
 			type:'GET',
 			dataType:'json',
 			url:'symbol',
 			data:{
 				"symbol":$('#symbol').val(),
-				"sample":$('#input_sample').val()
+				"sample":$('#input_sample').val(),
+				"offset":0,
+				"maxResults":20
 			},
 			
 			success: function(msg) {
@@ -78,6 +85,7 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '#nm_query', function() {
+		$('#queryType').val('nm_query');
 		$.ajax({
 			type:'GET',
 			dataType:'json',
@@ -85,6 +93,8 @@ $(document).ready(function() {
 			data:{
 				"sample":$('#input_sample').val(),
 				"nm":$('#nm').val(),
+				"offset":0,
+				"maxResults":20
 			},
 			
 			success: function(msg) {
@@ -96,30 +106,74 @@ $(document).ready(function() {
 			}
 		});
 	});
+	
+	function constructTable(msg) {
+		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"4\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th></tr></thead><tbody>';
+		
+		$.each(msg.list, function(index,item){
+			var param = '\'' + item.CHROM + '\',\'' + item.POS + '\',\'' + item.REF + '\',\'' + item.ALT + '\'';
+			content += '<tr><td>' +  (index+1) + '</td><td>' + item.CHROM + '</td><td>' + item.POS + '</td><td>' + item.REF + '</td><td>' + item.ALT + '</td><td><a href=\"#\" onclick=\"sendAjax(\'gno_gen\',' + param + ')\">' + item.AF_gno_genome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_exo\',' + param + ')\">' +item.AF_gno_exome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'onekg\',' + param + ')\">' + item.AF_EAS_1kg + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'esp\',' + param + ')\">' + item.AF_ALL_esp + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'exac\',' + param + ')\">' + item.AF_ALL_exac + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'annovar\',' + param + ')\">' + item.SIFT_score + '/' + item.Polyphen2_HDIV_score + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'clinvar\',' + param + ')\">' + item.CLNSIG_clinvar + '</a></td></tr>';
+			
+		});
+		
+		content += '</tbody></table>';
+		
+		$('#showresult').html(content);
+		
+		$('a').each(function(){
+			 if($(this).text() == 'undefined' || $(this).text() == 'undefined/undefined') {
+				 $(this).parent().html("");
+			} 	
+		});
+	}
 
 
 	function successCallBack(msg) {
 		if(msg=='') {
 			$('#showresult').html("no data from database returned");
 		} else {
+			constructTable(msg);
+			$('#page').val(msg.page);
 			
-			var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"4\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th></tr></thead><tbody>';
-			
-			$.each(msg, function(index,item){
-				var param = '\'' + item.CHROM + '\',\'' + item.POS + '\',\'' + item.REF + '\',\'' + item.ALT + '\'';
-				content += '<tr><td>' +  (index+1) + '</td><td>' + item.CHROM + '</td><td>' + item.POS + '</td><td>' + item.REF + '</td><td>' + item.ALT + '</td><td><a href=\"#\" onclick=\"sendAjax(\'gno_gen\',' + param + ')\">' + item.AF_gno_genome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_exo\',' + param + ')\">' +item.AF_gno_exome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'onekg\',' + param + ')\">' + item.AF_EAS_1kg + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'esp\',' + param + ')\">' + item.AF_ALL_esp + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'exac\',' + param + ')\">' + item.AF_ALL_exac + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'annovar\',' + param + ')\">' + item.SIFT_score + '/' + item.Polyphen2_HDIV_score + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'clinvar\',' + param + ')\">' + item.CLNSIG_clinvar + '</a></td></tr>';
-				
+			$('#page-selection').bootpag({
+				total: Math.ceil($('#page').val()/20),
+				page:1,
+				maxVisible:10
+			}).on('page',function(event,num){
+				var queryType = $('#queryType').val();
+				switch(queryType) {
+					case 'range_query':
+						sendAjaxForPage('range',
+								{
+							"sample": $('#input_sample').val(),
+							"chr": 'chr' + $('#range_chr').val(),
+							"start": $('#range_start').val(),
+							"end": $('#range_end').val(),
+							"offset":(num-1)*20,
+							"maxResults":20
+						});
+					break;
+					case 'symbol_query':
+						sendAjaxForPage('symbol',
+								{
+							"symbol":$('#symbol').val(),
+							"sample":$('#input_sample').val(),
+							"offset":(num-1)*20,
+							"maxResults":20
+								});
+					break;
+					case 'nm_query':
+						sendAjaxForPage('nm',
+								{
+							"sample":$('#input_sample').val(),
+							"nm":$('#nm').val(),
+							"offset":(num-1)*20,
+							"maxResults":20
+								});
+					break;
+				}
 			});
 			
-			content += '</tbody></table>';
-			
-			$('#showresult').html(content);
-			
-			$('a').each(function(){
-				 if($(this).text() == 'undefined' || $(this).text() == 'undefined/undefined') {
-					 $(this).parent().html("");
-				} 	
-			});
 		}
 	}
 
@@ -130,6 +184,23 @@ $(document).ready(function() {
 		}
 		
 		$('#showresult').html(msg);
+	}
+	
+	function sendAjaxForPage(type,dataArray) {
+		$.ajax({
+			type:'GET',
+			dataType:'json',
+			url: type,
+			data:dataArray,
+
+			success: function(msg) {
+				constructTable(msg);
+			},
+			
+			error: function(errorMsg) {
+				errorCallBack(errorMsg);
+			}
+		});
 	}
 	
 	function sendAjax(type,chr,pos,ref,alt) {

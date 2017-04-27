@@ -1,5 +1,6 @@
 package com.cloudhealth.view.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 import com.cloudhealth.view.model.AFPoint;
 import com.cloudhealth.view.model.AnnovarPoint;
@@ -14,7 +15,8 @@ import com.cloudhealth.view.model.RangePoint;
 public interface PointDao {
 
 	//query based on sample ID,chr,postion
-	public List<AFPoint> listAF(String sampleId, String chr, int start,int end);
+	public List<AFPoint> listAF(String sampleId, String chr, int start,int end,Integer offset, Integer maxResults);
+	public BigInteger count(String sampleId, String chr, int start,int end);
 	
 	public GnoGenomePoint queryGnoGen(String chr,int pos, String ref, String alt);
 	

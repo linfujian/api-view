@@ -6,7 +6,7 @@
  <link rel="stylesheet"
 		href='<c:url value="/web-resources/lib/bootstrap-3.3.7/css/bootstrap.min.css" />'>
  <link rel="stylesheet"
-		href='<c:url value="/web-resources/lib/jquery-ui-1.12.1.custom/jquery-ui.min.css" />' >
+		href='<c:url value="/web-resources/lib/jquery-ui-1.12.1.custom/jquery-ui.min.css" />' >	
 <title>Query</title>
 </head>
 <body>
@@ -42,6 +42,10 @@
 
 <div id="showresult"></div>
 
+<input type="hidden" id="queryType" />
+<input type="hidden" id="page" />
+<div class="col-sm-offset-7" id="page-selection"></div>
+
 <div class="dialog" id="gno_gen_detail" style="display:none;">
 	<%@ include file="PointDetail/gno_gen_Form.jsp" %>
 </div>
@@ -65,6 +69,7 @@
 </div>
 
 <script src='<c:url value="/web-resources/lib/jquery/jquery-3.2.0.min.js" />'></script>
+<script src='<c:url value="/web-resources/lib/jquery/bootpag.min.js" />'></script>
 <script src='<c:url value="/web-resources/lib/bootstrap-3.3.7/js/bootstrap.min.js" />'></script>
 <script type="text/javascript" src='<c:url value="/web-resources/lib/jquery-ui-1.12.1.custom/jquery-ui.min.js" />'></script>
 <script type="text/javascript" src='<c:url value="/web-resources/js/js-for-queryselect.js" />'></script>	

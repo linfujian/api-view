@@ -1,5 +1,6 @@
 package com.cloudhealth.view.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,12 @@ public class PointServiceImpl implements PointService {
 	PointDao pointDao;
 	
 	@Transactional(readOnly = true)
-	public List<AFPoint> listAFPoints(String sampleId, String chr, int start, int end) {
-		return pointDao.listAF(sampleId, chr, start, end);
+	public List<AFPoint> listAFPoints(String sampleId, String chr, int start, int end,Integer offset,Integer maxResults) {
+		return pointDao.listAF(sampleId, chr, start, end,offset,maxResults);
+	}
+	
+	public BigInteger count(String sampleId, String chr, int start, int end) {
+		return pointDao.count(sampleId, chr, start, end);
 	}
 
 	public GnoGenomePoint queryGnoGenPoint(String chr, int pos, String ref, String alt) {
@@ -55,20 +60,34 @@ public class PointServiceImpl implements PointService {
 		return pointDao.queryClinvar(chr, start, end, ref, alt);
 	}
 
-	public List<AFPoint> listAFPoints(String sampleId, String symbol) {
+	public List<AFPoint> listAFPoints(String sampleId, String symbol,Integer offset, Integer maxResults) {
 		RangePoint range =  pointDao.findRangeBySymbol(symbol);
 		
 		if(range.getAcc() != null)
-			return this.listAFPoints(sampleId, range.getChr_name(), Integer.valueOf(range.getTx_start()), Integer.valueOf(range.getTx_end()));
+			return this.listAFPoints(sampleId, range.getChr_name(), Integer.valueOf(range.getTx_start()), Integer.valueOf(range.getTx_end()),offset,maxResults);
 		return new ArrayList<AFPoint>();
 	}
+	
+	public BigInteger count(String sampleId, String symbol) {
+		RangePoint range =  pointDao.findRangeBySymbol(symbol);
+		if(range.getAcc() != null)
+			return this.count(sampleId, range.getChr_name(),Integer.valueOf(range.getTx_start()), Integer.valueOf(range.getTx_end()));
+		return null;
+	}
 
-	public List<AFPoint> listAFPointsByNm(String sampleId, String nm) {
+	public List<AFPoint> listAFPointsByNm(String sampleId, String nm,Integer offset, Integer maxResults) {
 		RangePoint range = pointDao.findRangeByNm(nm);
 		
 		if(range.getAcc() != null)
-			return this.listAFPoints(sampleId, range.getChr_name(), Integer.valueOf(range.getTx_start()), Integer.valueOf(range.getTx_end()));
+			return this.listAFPoints(sampleId, range.getChr_name(), Integer.valueOf(range.getTx_start()), Integer.valueOf(range.getTx_end()),offset, maxResults);
 		return new ArrayList<AFPoint>();
+	}
+
+	public BigInteger countByNm(String sampleId, String nm) {
+		RangePoint range = pointDao.findRangeByNm(nm);
+		if(range.getAcc() != null)
+			return this.count(sampleId,  range.getChr_name(), Integer.valueOf(range.getTx_start()), Integer.valueOf(range.getTx_end()));
+		return null;
 	}
 
 }
