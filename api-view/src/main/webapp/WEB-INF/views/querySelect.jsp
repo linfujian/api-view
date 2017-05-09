@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <html>
 <head>
  <link rel="stylesheet"
@@ -40,7 +41,10 @@
   </div>
 </div>
 
-<div id="showresult"></div>
+<form:form  modelAttribute="pointForm">
+	<div id="showresult">
+	</div>
+</form:form>
 
 <input type="hidden" id="queryType" />
 <input type="hidden" id="page" />
@@ -66,6 +70,12 @@
 </div>
 <div class="dialog" id="clinvar_detail" style="display:none;">
 	<%@ include file="PointDetail/clinvar_Form.jsp" %>
+</div>
+<div class="dialog" id="varAnno_detail" style="display:none;">
+	<%@ include file="PointDetail/varAnno_Form.jsp" %>
+</div>
+<div class="dialog" id="history_detail" style="display:none;">
+	<%@ include file="PointDetail/varAnnoHis_Form.jsp" %>
 </div>
 
 <script src='<c:url value="/web-resources/lib/jquery/jquery-3.2.0.min.js" />'></script>

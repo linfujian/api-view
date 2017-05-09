@@ -13,6 +13,21 @@ $(document).ready(function() {
 				$(this).dialog('close');
 			}
 		});
+		
+		$('#history_detail').dialog({
+			autoOpen : false,
+	        my: "center",
+	        at: "center",
+	        of: window,
+			modal : true,
+			resizable : false,
+			width:600,
+			height:600,
+			close : function() {
+				//resetDialog($('#paperForm'));
+				$(this).dialog('close');
+			}
+		});
 	});
 	
 	function getRadio(select) {
@@ -108,21 +123,34 @@ $(document).ready(function() {
 	});
 	
 	function constructTable(msg) {
-		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"4\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th></tr></thead><tbody>';
+		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"6\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th><th style=\"text-align:center;\" colspan=\"4\">VarAnno</th><th style=\"text-align:center;\">Report?</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>RS</th><th>Symbol</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th><th>VarAnno</th><th>Comments</th><th>VarAnnoDetail</th><th>History</th><th></th></tr></thead><tbody>';
 		
 		$.each(msg.list, function(index,item){
 			var param = '\'' + item.CHROM + '\',\'' + item.POS + '\',\'' + item.REF + '\',\'' + item.ALT + '\'';
-			content += '<tr><td>' +  (index+1) + '</td><td>' + item.CHROM + '</td><td>' + item.POS + '</td><td>' + item.REF + '</td><td>' + item.ALT + '</td><td><a href=\"#\" onclick=\"sendAjax(\'gno_gen\',' + param + ')\">' + item.AF_gno_genome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_exo\',' + param + ')\">' +item.AF_gno_exome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'onekg\',' + param + ')\">' + item.AF_EAS_1kg + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'esp\',' + param + ')\">' + item.AF_ALL_esp + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'exac\',' + param + ')\">' + item.AF_ALL_exac + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'annovar\',' + param + ')\">' + item.SIFT_score + '/' + item.Polyphen2_HDIV_score + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'clinvar\',' + param + ')\">' + item.CLNSIG_clinvar + '</a></td></tr>';
+			content += '<tr><td>' +  (index+1) + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].CHROM\" value=\"' + item.CHROM + '\" />' + item.CHROM + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].POS\" value=\"' + item.POS + '\" />' + item.POS + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].REF\" value=\"' + item.REF + '\" />' + item.REF + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].ALT\" value=\"' + item.ALT + '\" />' + item.ALT + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].RS\" value=\"' + item.RS + '\" /><a style=\"color:blue;\">' + item.RS +'</a></td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].GeneSymbol\" value=\"' + item.Symbol + '\" /><a style=\"color:red;\">' + item.Symbol + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_gen\',' + param + ')\">' + item.AF_gno_genome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_exo\',' + param + ')\">' +item.AF_gno_exome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'onekg\',' + param + ')\">' + item.AF_EAS_1kg + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'esp\',' + param + ')\">' + item.AF_ALL_esp + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'exac\',' + param + ')\">' + item.AF_ALL_exac + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'annovar\',' + param + ')\">' + item.SIFT_score + '/' + item.Polyphen2_HDIV_score + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'clinvar\',' + param + ')\">' + item.CLNSIG_clinvar +
+			'</a></td><td><select name=\"varAnnoPoints[' + index + '].Category\" class=\"selectpicker\"><option selected>' + item.Category + '</option><option>Benign</option><option>Likely Benign</option><option>Vus</option><option>Likely Path</option><option>Path</option><option>Other</option></select></td><td><input name=\"varAnnoPoints[' + index + '].Comments\" type=\"text\" maxlength=\"128\" value=\"' + item.Comments + '\" /></td><td><a href=\"#\" onclick=\"sendAjax(\'varAnnoDetail\',' + param + ')\">detail</a></td><td><button type=\"button\" class=\"btn btn-info\" onclick=\"sendAjax(\'history\',' + param + ')\">History</button></td><td><select name=\"varAnnoPoints[' + index + '].report\" class=\"selectpicker\"><option selected>' + item.REPORT + '</option><option>' + (item.REPORT=='no'? 'yes':'no') + '</option></select></td></tr>';
 			
 		});
 		
-		content += '</tbody></table>';
+		content += '</tbody></table><br/><button id=\"submit\" class=\"col-sm-offset-10 btn btn-danger\" >Save The Update</button>';
 		
 		$('#showresult').html(content);
 		
 		$('a').each(function(){
 			 if($(this).text() == 'undefined' || $(this).text() == 'undefined/undefined') {
 				 $(this).parent().html("");
+			} 	
+		});
+		
+		$('option').each(function(){
+			 if($(this).text() == 'undefined') {
+				 $(this).html("pl choose");
+			} 	
+		});
+		
+		$('input').each(function(){
+			 if($(this).val() == 'undefined') {
+				 $(this).val("");
 			} 	
 		});
 	}
@@ -251,5 +279,43 @@ $(document).ready(function() {
 				$('#clinvar_detail').dialog("option","title","Clinvar");
 				$('#clinvar_detail').dialog('open');
 			}
+			if(type=='varAnnoDetail') {
+				$('#varAnno_detail').html(result);
+				$('#varAnno_detail').dialog("option","title","VarAnno");
+				$('#varAnno_detail').dialog('open');
+			}
+			//query history
+			if(type=='history') {
+				$('#history_detail').html(result);
+				$('#history_detail').dialog("option","title","VarAnnoHistory");
+				$('#history_detail').dialog('open');
+			}
 		});
 	}
+	
+	$(document).on("click","#submit",function(e) {
+		e.preventDefault();
+		$.ajax({
+			type:'POST',
+			url:'batchupdate/'+ $('#input_sample').val(),
+			data: $('form').serialize(),
+			success: function(msg) {
+				alert(msg);
+			}
+		});
+	});
+	/*function update() {
+		
+		$('#pointForm').submit(function(e) {
+			e.preventDefault();
+			$.ajax({
+				type:'POST',
+				url:'batchupdate',
+				data: $('form').serialize(),
+				success: function(msg) {
+					alert(msg);
+				}
+			});
+			
+		});
+	}*/

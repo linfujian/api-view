@@ -16,6 +16,9 @@ import com.cloudhealth.view.model.GnoExoPoint;
 import com.cloudhealth.view.model.GnoGenomePoint;
 import com.cloudhealth.view.model.OnekgPoint;
 import com.cloudhealth.view.model.RangePoint;
+import com.cloudhealth.view.model.VarAnnoPoint;
+import com.cloudhealth.view.model.VarAnnoPoint_history;
+import com.cloudhealth.view.model.VarAnnoReportPoint;
 
 @Service
 public class PointServiceImpl implements PointService {
@@ -90,4 +93,19 @@ public class PointServiceImpl implements PointService {
 		return null;
 	}
 
+	public String batchUpdate(List<VarAnnoReportPoint> varAnnoPoints, String sampleId) {
+		String message = pointDao.batchUpdate(varAnnoPoints,sampleId);
+		if(message.equals("successUpdate"))
+			return "successUpdate";
+		return null;
+	}
+	
+	public VarAnnoPoint queryVarAnnoPoint(String chr, int pos, String ref, String alt) {
+		return pointDao.queryVarAnno(chr, pos, ref, alt);
+	}
+
+	public List<VarAnnoPoint_history> queryVarAnnoHistory(String chr, int pos, String ref, String alt) {
+		return pointDao.queryHistory(chr, pos, ref, alt);
+	}
+	
 }

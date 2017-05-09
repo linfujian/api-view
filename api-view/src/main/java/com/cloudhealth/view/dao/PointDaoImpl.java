@@ -9,6 +9,8 @@ import org.apache.taglibs.standard.lang.jstl.AndOperator;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,9 @@ import com.cloudhealth.view.model.GnoGenomePoint;
 import com.cloudhealth.view.model.OnekgPoint;
 import com.cloudhealth.view.model.RangePoint;
 import com.cloudhealth.view.model.SampleInfo;
+import com.cloudhealth.view.model.VarAnnoPoint;
+import com.cloudhealth.view.model.VarAnnoPoint_history;
+import com.cloudhealth.view.model.VarAnnoReportPoint;
 
 @Repository
 @Transactional
@@ -42,7 +47,9 @@ public class PointDaoImpl implements PointDao {
 	public List<AFPoint> listAF(String sampleId, String chr, int start, int end,Integer offset, Integer maxResults) {
 		if(chr.contains("chr"))
 			chr = chr.substring(3);
-		SQLQuery query = getSession().createSQLQuery("SELECT sample.CHROM,sample.POS,sample.REF,sample.ALT,gno.AF_GNOMAD AS AF_gno_genome,exo.AF_GNOMAD AS AF_gno_exome, 1kg.AF_EAS AS AF_EAS_1kg, esp.AF_ALL AS AF_ALL_esp, exac.EXAC_ALL AS AF_ALL_exac, annovar.SIFT_score AS SIFT_score, annovar.Polyphen2_HDIV_score as Polyphen2_HDIV_score, clinvar.CLNSIG AS CLNSIG_clinvar FROM sampleinfor sample LEFT JOIN gnochr" + chr + " gno ON (sample.CHROM = gno.CHROM AND sample.POS = gno.POS AND sample.REF = gno.REF AND sample.ALT = gno.ALT) LEFT JOIN exochr" + chr + " exo ON (sample.CHROM = exo.CHROM AND sample.POS = exo.POS AND sample.REF = exo.REF AND sample.ALT = exo.ALT) LEFT JOIN hg38_1kg 1kg ON (sample.CHROM = 1kg.CHROM AND sample.POS = 1kg.POS AND sample.REF = 1kg.REF AND sample.ALT = 1kg.OBS) LEFT JOIN hg38_esp esp ON (sample.CHROM = esp.CHROM AND sample.POS = esp.START AND sample.POS = esp.END AND sample.REF = esp.REF AND sample.ALT = esp.ALT) LEFT JOIN hg38_exac exac ON (sample.CHROM = exac.CHROM AND sample.POS = exac.START AND sample.POS = exac.END AND sample.REF = exac.REF AND sample.ALT = exac.ALT) LEFT JOIN hg38_annovar annovar ON (sample.CHROM = annovar.CHROM AND sample.POS = annovar.START AND sample.POS = annovar.END AND sample.REF = annovar.REF AND sample.ALT = annovar.ALT) LEFT JOIN clinvar ON (sample.CHROM = clinvar.CHROM AND sample.POS = clinvar.START_POINT AND sample.POS = clinvar.END_POINT AND sample.REF = clinvar.REF AND sample.ALT = clinvar.ALT) WHERE sample.SAMPLE = :sample AND sample.CHROM = :chr AND sample.POS BETWEEN :start AND :end AND LENGTH(sample.REF)=1 AND LENGTH(sample.ALT)=1").addEntity(AFPoint.class);
+		//SQLQuery query = getSession().createSQLQuery("SELECT sample.CHROM,sample.POS,sample.REF,sample.ALT,com.symbol AS Symbol,pr.RS AS RS, gno.AF_GNOMAD AS AF_gno_genome,exo.AF_GNOMAD AS AF_gno_exome, 1kg.AF_EAS AS AF_EAS_1kg, esp.AF_ALL AS AF_ALL_esp, exac.EXAC_ALL AS AF_ALL_exac, annovar.SIFT_score AS SIFT_score, annovar.Polyphen2_HDIV_score as Polyphen2_HDIV_score, clinvar.CLNSIG AS CLNSIG_clinvar FROM sampleinfor sample LEFT JOIN (SELECT ref.chr_name,ref.tx_start,ref.tx_end,homo.symbol FROM refseqs ref,homo_geninfor homo WHERE ref.entrez_id = homo.entrez_id) AS com ON (sample.CHROM=com.chr_name and sample.POS > com.tx_start and sample.POS<com.tx_end) LEFT JOIN point_rs pr ON(sample.CHROM = pr.CHROM and sample.POS = pr.START) LEFT JOIN gnochr" + chr + " gno ON (sample.CHROM = gno.CHROM AND sample.POS = gno.POS AND sample.REF = gno.REF AND sample.ALT = gno.ALT) LEFT JOIN exochr" + chr + " exo ON (sample.CHROM = exo.CHROM AND sample.POS = exo.POS AND sample.REF = exo.REF AND sample.ALT = exo.ALT) LEFT JOIN hg38_1kg 1kg ON (sample.CHROM = 1kg.CHROM AND sample.POS = 1kg.POS AND sample.REF = 1kg.REF AND sample.ALT = 1kg.OBS) LEFT JOIN hg38_esp esp ON (sample.CHROM = esp.CHROM AND sample.POS = esp.START AND sample.POS = esp.END AND sample.REF = esp.REF AND sample.ALT = esp.ALT) LEFT JOIN hg38_exac exac ON (sample.CHROM = exac.CHROM AND sample.POS = exac.START AND sample.POS = exac.END AND sample.REF = exac.REF AND sample.ALT = exac.ALT) LEFT JOIN hg38_annovar annovar ON (sample.CHROM = annovar.CHROM AND sample.POS = annovar.START AND sample.POS = annovar.END AND sample.REF = annovar.REF AND sample.ALT = annovar.ALT) LEFT JOIN clinvar ON (sample.CHROM = clinvar.CHROM AND sample.POS = clinvar.START_POINT AND sample.POS = clinvar.END_POINT AND sample.REF = clinvar.REF AND sample.ALT = clinvar.ALT) WHERE sample.SAMPLE = :sample AND sample.CHROM = :chr AND sample.POS BETWEEN :start AND :end AND LENGTH(sample.REF)=1 AND LENGTH(sample.ALT)=1 GROUP BY sample.POS").addEntity(AFPoint.class);
+		SQLQuery query = getSession().createSQLQuery("SELECT sample.CHROM,sample.POS,sample.REF,sample.ALT,com.symbol AS Symbol,\"rs\" AS RS, gno.AF_GNOMAD AS AF_gno_genome,exo.AF_GNOMAD AS AF_gno_exome, 1kg.AF_EAS AS AF_EAS_1kg, esp.AF_ALL AS AF_ALL_esp, exac.EXAC_ALL AS AF_ALL_exac, annovar.SIFT_score AS SIFT_score, annovar.Polyphen2_HDIV_score as Polyphen2_HDIV_score, clinvar.CLNSIG AS CLNSIG_clinvar, vcfanno.Category, vcfanno.Comments, sample.REPORT FROM sampleinfor sample LEFT JOIN (SELECT ref.chr_name,ref.tx_start,ref.tx_end,homo.symbol FROM refseqs ref,homo_geninfor homo WHERE ref.entrez_id = homo.entrez_id) AS com ON (sample.CHROM=com.chr_name and sample.POS > com.tx_start and sample.POS<com.tx_end)  LEFT JOIN gnochr" + chr + " gno ON (sample.CHROM = gno.CHROM AND sample.POS = gno.POS AND sample.REF = gno.REF AND sample.ALT = gno.ALT) LEFT JOIN exochr" + chr + " exo ON (sample.CHROM = exo.CHROM AND sample.POS = exo.POS AND sample.REF = exo.REF AND sample.ALT = exo.ALT) LEFT JOIN hg38_1kg 1kg ON (sample.CHROM = 1kg.CHROM AND sample.POS = 1kg.POS AND sample.REF = 1kg.REF AND sample.ALT = 1kg.OBS) LEFT JOIN hg38_esp esp ON (sample.CHROM = esp.CHROM AND sample.POS = esp.START AND sample.POS = esp.END AND sample.REF = esp.REF AND sample.ALT = esp.ALT) LEFT JOIN hg38_exac exac ON (sample.CHROM = exac.CHROM AND sample.POS = exac.START AND sample.POS = exac.END AND sample.REF = exac.REF AND sample.ALT = exac.ALT) LEFT JOIN hg38_annovar annovar ON (sample.CHROM = annovar.CHROM AND sample.POS = annovar.START AND sample.POS = annovar.END AND sample.REF = annovar.REF AND sample.ALT = annovar.ALT) LEFT JOIN clinvar ON (sample.CHROM = clinvar.CHROM AND sample.POS = clinvar.START_POINT AND sample.POS = clinvar.END_POINT AND sample.REF = clinvar.REF AND sample.ALT = clinvar.ALT) LEFT JOIN vcfanno ON(sample.CHROM=vcfanno.CHROM AND sample.POS=vcfanno.POS AND sample.REF=vcfanno.REF AND sample.ALT=vcfanno.ALT) WHERE sample.SAMPLE = :sample AND sample.CHROM = :chr AND sample.POS BETWEEN :start AND :end AND LENGTH(sample.REF)=1 AND LENGTH(sample.ALT)=1 GROUP BY sample.POS").addEntity(AFPoint.class);
+
 		List<AFPoint> afPointInfors = query.setString("sample", sampleId).setString("chr", "chr" + chr).setInteger("start", start).setInteger("end", end).setFirstResult(offset!=null?offset:0).setMaxResults(maxResults!=null?maxResults:10).list();
 		afPointInfors = (List<AFPoint>) (afPointInfors.isEmpty()? new ArrayList() : afPointInfors); 
 		
@@ -122,6 +129,19 @@ public class PointDaoImpl implements PointDao {
 		ClinvarPoint point = (ClinvarPoint) query.setString("chr", chr).setInteger("start", start).setInteger("end", end).setString("ref", ref).setString("alt", alt).list().get(0);
 		return point;
 	}
+	//VarAnno/history detail
+	public VarAnnoPoint queryVarAnno(String chr, int pos, String ref, String alt) {
+		SQLQuery query = getSession().createSQLQuery("SELECT * FROM vcfanno WHERE CHROM=:chr AND POS=:pos AND REF=:ref AND ALT=:alt").addEntity(VarAnnoPoint.class);
+		List<VarAnnoPoint> list = query.setString("chr", chr).setInteger("pos", pos).setString("ref", ref).setString("alt", alt).list();
+
+		VarAnnoPoint point = list.isEmpty()? new VarAnnoPoint():list.get(0);
+		return point;
+	}
+	public List<VarAnnoPoint_history> queryHistory(String chr, int pos, String ref, String alt) {
+		SQLQuery query = getSession().createSQLQuery("SELECT his.revision,his.dt_datetime AS datetime,his.action,his.Category,his.Comments,his.OperUser FROM vcfanno_history his WHERE CHROM=:chr AND POS=:pos AND REF=:ref AND ALT=:alt ORDER BY revision").addEntity(VarAnnoPoint_history.class);
+		List<VarAnnoPoint_history> list = query.setString("chr", chr).setInteger("pos", pos).setString("ref", ref).setString("alt", alt).list();
+		return list;
+	}
 	
 	//handle for sampleInfo to change pos to start/end
 	//TODO
@@ -152,7 +172,24 @@ public class PointDaoImpl implements PointDao {
 		
 	}*/
 	
+	public String batchUpdate(List<VarAnnoReportPoint> varAnnoPoints,String sampleId) {
+
+		for(Iterator<VarAnnoReportPoint> iterator = varAnnoPoints.iterator(); iterator.hasNext();) {
+			VarAnnoReportPoint varAnnoPointReport = iterator.next();
 	
+			//½«annovarPoint object merge into persistence a copy is persisted and this object is free
+			try {
+				VarAnnoPoint varAnnoPoint = varAnnoPointReport.getVarAnnoPoint();
+				getSession().merge(varAnnoPoint);
+				getSession().createSQLQuery("UPDATE sampleinfor SET REPORT=:report WHERE SAMPLE=:sample AND CHROM=:chr AND POS=:pos AND REF=:ref AND ALT=:alt").setString("sample", sampleId).setString("chr", varAnnoPoint.getCHROM()).setInteger("pos", Integer.parseInt(varAnnoPoint.getPOS())).setString("ref", varAnnoPoint.getREF()).setString("alt", varAnnoPoint.getALT()).setString("report", varAnnoPointReport.getReport()).executeUpdate();
+			} catch (Exception e) {
+				return null;
+			}
+			
+		}
+		
+		return "successUpdate";
+	}
 	
 	private Session getSession() {
 		Session session = getSessionFactory().getCurrentSession();
@@ -164,5 +201,5 @@ public class PointDaoImpl implements PointDao {
 	private SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
-
+	
 }

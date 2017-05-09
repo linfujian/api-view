@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.cloudhealth.view.model.AFPoint;
 import com.cloudhealth.view.model.AnnovarPoint;
 import com.cloudhealth.view.model.ClinvarPoint;
 import com.cloudhealth.view.model.EspPoint;
@@ -18,6 +18,9 @@ import com.cloudhealth.view.model.ExacPoint;
 import com.cloudhealth.view.model.GnoExoPoint;
 import com.cloudhealth.view.model.GnoGenomePoint;
 import com.cloudhealth.view.model.OnekgPoint;
+import com.cloudhealth.view.model.PointForm;
+import com.cloudhealth.view.model.VarAnnoPoint;
+import com.cloudhealth.view.model.VarAnnoPoint_history;
 import com.cloudhealth.view.service.PointService;
 
 @Controller
@@ -104,6 +107,32 @@ public class ApiViewController {
 		model.addAttribute("clinvar", point);
 		return "/PointDetail/clinvar_Form";
 	}
+	
+	@RequestMapping("/history/{chr}/{pos}/{ref}/{alt}")
+	public String queryHistory(@PathVariable String chr, @PathVariable int pos, @PathVariable String ref, @PathVariable String alt, Model model) {
+		List<VarAnnoPoint_history> list = pointService.queryVarAnnoHistory(chr, pos, ref, alt);
+		model.addAttribute("varAnnoHisList", list);
+		return "/PointDetail/varAnnoHis_Form";
+	}
+	
+	@RequestMapping("varAnnoDetail/{chr}/{pos}/{ref}/{alt}")
+	public String queryVarAnno(@PathVariable String chr, @PathVariable int pos, @PathVariable String ref, @PathVariable String alt, Model model) {
+		VarAnnoPoint point = pointService.queryVarAnnoPoint(chr, pos, ref, alt);
+		model.addAttribute("varAnno", point);
+		return "/PointDetail/varAnno_Form";
+	}
+	
+	@RequestMapping(value="/batchupdate/{sampleId}", method=RequestMethod.POST)
+	public @ResponseBody String batchUpdate(@ModelAttribute("pointForm") PointForm pointForm, @PathVariable String sampleId) {
+
+		String message = pointService.batchUpdate(pointForm.getVarAnnoPoints(), sampleId);
+		if(("successUpdate").equals(message))
+			return "Update Successfully";
+		else
+			return "Update Fail";
+		
+	}
+	
 	
 	
 }

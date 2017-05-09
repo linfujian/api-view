@@ -1,6 +1,5 @@
 package com.cloudhealth.view.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -27,6 +26,15 @@ public class AFPoint {
 	private String ALT; 
 	public void setALT(String ALT){this.ALT = ALT;}
 	public String getALT(){return ALT;}	
+	
+	//2017.5.02 add
+	private String Symbol;
+	public void setSymbol(String Symbol) {this.Symbol = Symbol;}
+	public String getSymbol() {return Symbol;}
+	
+	private String RS;
+	public void setRS(String RS) {this.RS = RS;}
+	public String getRS() {return RS;}
 	
 	private String AF_gno_genome; 
 	public void setAF_gno_genome(String AF_gno_genome){this.AF_gno_genome = AF_gno_genome;}
@@ -59,5 +67,18 @@ public class AFPoint {
 	private String CLNSIG_clinvar; 
 	public void setCLNSIG_clinvar(String CLNSIG_clinvar){this.CLNSIG_clinvar = CLNSIG_clinvar;}
 	public String getCLNSIG_clinvar(){return CLNSIG_clinvar;}
+	
+	//2017.5.4 add
+	private String Category;
+	public void setCategory(String Category) {this.Category = Category;}
+	public String getCategory() {return Category;}
+	
+	private String Comments;
+	public void setComments(String Comments) {this.Comments = Comments;}
+	public String getComments() {return Comments;}
+	
+	private String REPORT;
+	public void setREPORT(String REPORT) {this.REPORT = REPORT;}
+	public String getREPORT() {return REPORT;}
 	
 }

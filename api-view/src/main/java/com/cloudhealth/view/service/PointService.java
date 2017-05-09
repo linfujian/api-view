@@ -10,6 +10,9 @@ import com.cloudhealth.view.model.ExacPoint;
 import com.cloudhealth.view.model.GnoExoPoint;
 import com.cloudhealth.view.model.GnoGenomePoint;
 import com.cloudhealth.view.model.OnekgPoint;
+import com.cloudhealth.view.model.VarAnnoPoint;
+import com.cloudhealth.view.model.VarAnnoPoint_history;
+import com.cloudhealth.view.model.VarAnnoReportPoint;
 
 public interface PointService {
 	
@@ -38,4 +41,12 @@ public interface PointService {
 	public List<AFPoint> listAFPointsByNm(String sampleId,String nm,Integer offset, Integer maxResults);
 
 	public BigInteger countByNm(String sampleId, String nm);
+	
+	public String batchUpdate(List<VarAnnoReportPoint> varAnnoPoints,String sampleId);
+	
+
+	//varAnnoDetail
+	public VarAnnoPoint queryVarAnnoPoint(String chr, int pos, String ref, String alt);
+	
+	public List<VarAnnoPoint_history> queryVarAnnoHistory(String chr, int pos, String ref, String alt);
 }

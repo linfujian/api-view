@@ -11,6 +11,9 @@ import com.cloudhealth.view.model.GnoExoPoint;
 import com.cloudhealth.view.model.GnoGenomePoint;
 import com.cloudhealth.view.model.OnekgPoint;
 import com.cloudhealth.view.model.RangePoint;
+import com.cloudhealth.view.model.VarAnnoPoint;
+import com.cloudhealth.view.model.VarAnnoPoint_history;
+import com.cloudhealth.view.model.VarAnnoReportPoint;
 
 public interface PointDao {
 
@@ -32,8 +35,16 @@ public interface PointDao {
 	
 	public ClinvarPoint queryClinvar(String chr, int start, int end, String ref, String alt);
 	
+	//2015.05.08 add
+	public VarAnnoPoint queryVarAnno(String chr,int pos, String ref, String alt);
+	
+	public List<VarAnnoPoint_history> queryHistory(String chr,int pos, String ref, String alt);
+	
 	//find chr start end from refseqs through entrez_id in homo_geninfor through symbol
 	public RangePoint findRangeBySymbol(String symbol);
 
 	public RangePoint findRangeByNm(String nm);
+	
+	public String batchUpdate(List<VarAnnoReportPoint> varAnnoPoints, String sampleId);
+	
 }
