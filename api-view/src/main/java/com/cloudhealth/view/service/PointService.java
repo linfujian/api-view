@@ -16,9 +16,9 @@ import com.cloudhealth.view.model.VarAnnoReportPoint;
 
 public interface PointService {
 	
-	public List<AFPoint> listAFPoints(String sampleId, String chr, int start, int end,Integer offset,Integer maxResults);
+	public List<AFPoint> listAFPoints(String sampleId, String chr, int start, int end,Integer offset,Integer maxResults,String varAnnoGroupType);
 	
-	public BigInteger count(String sampleId, String chr, int start,int end);
+	public BigInteger count(String sampleId, String chr, int start,int end,String vcfAnnoGroupType);
 	
 	public GnoGenomePoint queryGnoGenPoint(String chr,int pos,String ref,String alt);
 	
@@ -34,13 +34,13 @@ public interface PointService {
 	
 	public ClinvarPoint queryClinvarPoint(String chr, int start, int end, String ref, String alt);
 	
-	public List<AFPoint> listAFPoints(String sampleId,String symbol,Integer offset, Integer maxResults);
+	public List<AFPoint> listAFPoints(String sampleId,String symbol,Integer offset, Integer maxResults,String varAnnoGroupType);
 	
-	public BigInteger count(String sampleId, String symbol); 
+	public BigInteger count(String sampleId, String symbol, String vcfAnnoGroupType); 
 	
-	public List<AFPoint> listAFPointsByNm(String sampleId,String nm,Integer offset, Integer maxResults);
+	public List<AFPoint> listAFPointsByNm(String sampleId,String nm,Integer offset, Integer maxResults,String varAnnoGroupType);
 
-	public BigInteger countByNm(String sampleId, String nm);
+	public BigInteger countByNm(String sampleId, String nm,String vcfAnnoGroupType);
 	
 	public String batchUpdate(List<VarAnnoReportPoint> varAnnoPoints,String sampleId);
 	

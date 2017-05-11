@@ -18,8 +18,8 @@ import com.cloudhealth.view.model.VarAnnoReportPoint;
 public interface PointDao {
 
 	//query based on sample ID,chr,postion
-	public List<AFPoint> listAF(String sampleId, String chr, int start,int end,Integer offset, Integer maxResults);
-	public BigInteger count(String sampleId, String chr, int start,int end);
+	public List<AFPoint> listAF(String sampleId, String chr, int start,int end,Integer offset, Integer maxResults, String varAnnoGroupType);
+	public BigInteger count(String sampleId, String chr, int start,int end,String varAnnoGroupType);
 	
 	public GnoGenomePoint queryGnoGen(String chr,int pos, String ref, String alt);
 	

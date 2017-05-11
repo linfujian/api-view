@@ -36,31 +36,38 @@ public class ApiViewController {
 	}
 	
 	@RequestMapping("/range")
-	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, @RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, @RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno",defaultValue="ALL") String varAnnoGroupType) {
+		if("pl choose".equals(varAnnoGroupType))
+			varAnnoGroupType = "ALL";
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("list", pointService.listAFPoints(sample, chr, start, end,offset,maxResult));
-		map.put("page", pointService.count(sample, chr, start, end));
+		map.put("list", pointService.listAFPoints(sample, chr, start, end,offset,maxResult,varAnnoGroupType));
+		map.put("page", pointService.count(sample, chr, start, end,varAnnoGroupType));
 		return map;
 	}
 	
 	@RequestMapping("/symbol")
-	public @ResponseBody HashMap<String, Object> listAFPoint(@RequestParam("sample") String sample,@RequestParam("symbol") String symbol,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+	public @ResponseBody HashMap<String, Object> listAFPoint(@RequestParam("sample") String sample,@RequestParam("symbol") String symbol,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno", defaultValue="ALL") String varAnnoGroupType) {
+		if("pl choose".equals(varAnnoGroupType))
+			varAnnoGroupType = "ALL";
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("list", pointService.listAFPoints(sample, symbol,offset,maxResult));
-		map.put("page", pointService.count(sample, symbol));
+		map.put("list", pointService.listAFPoints(sample, symbol,offset,maxResult,varAnnoGroupType));
+		map.put("page", pointService.count(sample, symbol,varAnnoGroupType));
 		return map;
 	}
 	
 	@RequestMapping("/nm")
-	public @ResponseBody HashMap<String, Object> listAFPointByNm(@RequestParam("sample") String sample, @RequestParam("nm") String nm,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult) {
+	public @ResponseBody HashMap<String, Object> listAFPointByNm(@RequestParam("sample") String sample, @RequestParam("nm") String nm,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno", defaultValue="ALL") String varAnnoGroupType) {
+		if("pl choose".equals(varAnnoGroupType))
+			varAnnoGroupType = "ALL";
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("list", pointService.listAFPointsByNm(sample, nm,offset,maxResult));
-		map.put("page", pointService.countByNm(sample, nm));
+		map.put("list", pointService.listAFPointsByNm(sample, nm,offset,maxResult,varAnnoGroupType));
+		map.put("page", pointService.countByNm(sample, nm,varAnnoGroupType));
 		return map;
 	}
 	
 	@RequestMapping("/gno_gen/{chr}/{pos}/{ref}/{alt}")
 	public String queryGnoGen(@PathVariable String chr, @PathVariable int pos, @PathVariable String ref, @PathVariable String alt, Model model) {
+		
 		GnoGenomePoint point = pointService.queryGnoGenPoint(chr, pos, ref, alt);
 		model.addAttribute("gno_gen", point);
 		return "/PointDetail/gno_gen_Form";

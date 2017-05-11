@@ -28,6 +28,7 @@ $(document).ready(function() {
 				$(this).dialog('close');
 			}
 		});
+		
 	});
 	
 	function getRadio(select) {
@@ -63,7 +64,8 @@ $(document).ready(function() {
 				"start": $('#range_start').val(),
 				"end": $('#range_end').val(),
 				"offset":0,
-				"maxResults":20
+				"maxResults":20,
+				"varAnno":$("#groupVarAnno").val()
 			},
 			
 			success: function(msg) {
@@ -86,7 +88,8 @@ $(document).ready(function() {
 				"symbol":$('#symbol').val(),
 				"sample":$('#input_sample').val(),
 				"offset":0,
-				"maxResults":20
+				"maxResults":20,
+				"varAnno":$("#groupVarAnno").val()
 			},
 			
 			success: function(msg) {
@@ -109,7 +112,8 @@ $(document).ready(function() {
 				"sample":$('#input_sample').val(),
 				"nm":$('#nm').val(),
 				"offset":0,
-				"maxResults":20
+				"maxResults":20,
+				"varAnno":$("#groupVarAnno").val()
 			},
 			
 			success: function(msg) {
@@ -123,7 +127,8 @@ $(document).ready(function() {
 	});
 	
 	function constructTable(msg) {
-		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"6\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th><th style=\"text-align:center;\" colspan=\"4\">VarAnno</th><th style=\"text-align:center;\">Report?</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>RS</th><th>Symbol</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th><th>VarAnno</th><th>Comments</th><th>VarAnnoDetail</th><th>History</th><th></th></tr></thead><tbody>';
+		var varAnnoGroupType = $("#groupVarAnno").val();
+		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"6\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th><th style=\"text-align:center;\" colspan=\"4\">VarAnno</th><th style=\"text-align:center;\">Report?</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>RS</th><th>Symbol</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th><th>Group by<select id=\"groupVarAnno\"><option selected>' + varAnnoGroupType + '</option><option value=\"ALL\">ALL</option><option value=\"Benign\">Benign</option><option value=\"Likely Benign\">Likely Benign</option><option value=\"Vus\">Vus</option><option value=\"Likely Path\">Likely Path</option><option value=\"Path\">Path</option><option value=\"Other\">Other</option></select></th><th>Comments</th><th>VarAnnoDetail</th><th>History</th><th></th></tr></thead><tbody>';
 		
 		$.each(msg.list, function(index,item){
 			var param = '\'' + item.CHROM + '\',\'' + item.POS + '\',\'' + item.REF + '\',\'' + item.ALT + '\'';
@@ -188,7 +193,8 @@ $(document).ready(function() {
 					"start": $('#range_start').val(),
 					"end": $('#range_end').val(),
 					"offset":(num-1)*20,
-					"maxResults":20
+					"maxResults":20,
+					"varAnno":$('#groupVarAnno').val()
 				});
 			break;
 			case 'symbol_query':
@@ -197,7 +203,8 @@ $(document).ready(function() {
 					"symbol":$('#symbol').val(),
 					"sample":$('#input_sample').val(),
 					"offset":(num-1)*20,
-					"maxResults":20
+					"maxResults":20,
+					"varAnno":$('#groupVarAnno').val()
 						});
 			break;
 			case 'nm_query':
@@ -206,7 +213,8 @@ $(document).ready(function() {
 					"sample":$('#input_sample').val(),
 					"nm":$('#nm').val(),
 					"offset":(num-1)*20,
-					"maxResults":20
+					"maxResults":20,
+					"varAnno":$('#groupVarAnno').val()
 						});
 			break;
 		}
@@ -319,3 +327,15 @@ $(document).ready(function() {
 			
 		});
 	}*/
+	$(document).on('change','#groupVarAnno',function(){
+		
+		if($('#queryType').val() == 'range_query'){
+			$('#range_query').trigger('click');
+		}
+		if($('#queryType').val() == 'symbol_query'){
+			$('#symbol_query').trigger('click');
+		}
+		if($('#queryType').val() == 'nm_query'){
+			$('#nm_query').trigger('click');
+		}
+	});
