@@ -1,11 +1,13 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-@Entity @IdClass(PosPointId.class)
+import com.cloudhealth.view.id.StartToEndPointId;
+
+@Entity @IdClass(StartToEndPointId.class)
 @Table(name="vcfanno")
 public class VarAnnoPoint {
 
@@ -13,7 +15,9 @@ public class VarAnnoPoint {
 	private String CHROM;
 	
 	@Id
-	private String POS;
+	private String START;
+	
+	private String END;
 	
 	@Id
 	private String REF;
@@ -23,6 +27,8 @@ public class VarAnnoPoint {
 	
 	private String RS;	
 	private String GeneSymbol;
+	private String Func;
+	private String ExonicFunc;
 	private String Cdot;
 	private String Pdot;
 	private String Category;
@@ -36,11 +42,18 @@ public class VarAnnoPoint {
 		this.CHROM = CHROM;
 	}
 	
-	public String getPOS() {
-		return POS;
+	public String getSTART() {
+		return START;
 	}
-	public void setPOS(String POS) {
-		this.POS = POS;
+	public void setSTART(String START) {
+		this.START = START;
+	}
+	
+	public String getEND() {
+		return END;
+	}
+	public void setEND(String END) {
+		this.END = END;
 	}
 	
 	public String getREF() {
@@ -69,6 +82,20 @@ public class VarAnnoPoint {
 	}
 	public void setGeneSymbol(String GeneSymbol) {
 		this.GeneSymbol = GeneSymbol;
+	}
+	
+	public String getFunc() {
+		return Func;
+	}
+	public void setFunc(String Func) {
+		this.Func = Func;
+	}
+	
+	public String getExonicFunc() {
+		return ExonicFunc;
+	}
+	public void setExonicFunc(String ExonicFunc) {
+		this.ExonicFunc = ExonicFunc;
 	}
 	
 	public String getCdot() {

@@ -11,16 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.cloudhealth.view.model.AnnovarPoint;
-import com.cloudhealth.view.model.ClinvarPoint;
-import com.cloudhealth.view.model.EspPoint;
-import com.cloudhealth.view.model.ExacPoint;
-import com.cloudhealth.view.model.GnoExoPoint;
-import com.cloudhealth.view.model.GnoGenomePoint;
-import com.cloudhealth.view.model.OnekgPoint;
+
+import com.cloudhealth.view.entity.AnnovarPoint;
+import com.cloudhealth.view.entity.ClinvarPoint;
+import com.cloudhealth.view.entity.EspPoint;
+import com.cloudhealth.view.entity.ExacPoint;
+import com.cloudhealth.view.entity.GnoExoPoint;
+import com.cloudhealth.view.entity.GnoGenomePoint;
+import com.cloudhealth.view.entity.HgmdPoint;
+import com.cloudhealth.view.entity.OnekgPoint;
+import com.cloudhealth.view.entity.VarAnnoPoint;
+import com.cloudhealth.view.entity.VarAnnoPoint_history;
 import com.cloudhealth.view.model.PointForm;
-import com.cloudhealth.view.model.VarAnnoPoint;
-import com.cloudhealth.view.model.VarAnnoPoint_history;
 import com.cloudhealth.view.service.PointService;
 
 @Controller
@@ -36,32 +38,44 @@ public class ApiViewController {
 	}
 	
 	@RequestMapping("/range")
-	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, @RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno",defaultValue="ALL") String varAnnoGroupType) {
+	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, @RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno",defaultValue="ALL") String varAnnoGroupType, @RequestParam(value="hgmd",defaultValue="ALL") String hgmdType) {
 		if("pl choose".equals(varAnnoGroupType))
 			varAnnoGroupType = "ALL";
+
+		if("pl choose".equals(hgmdType))
+			hgmdType = "ALL";
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("list", pointService.listAFPoints(sample, chr, start, end,offset,maxResult,varAnnoGroupType));
-		map.put("page", pointService.count(sample, chr, start, end,varAnnoGroupType));
+		map.put("list", pointService.listAFPoints(sample, chr, start, end,offset,maxResult,varAnnoGroupType,hgmdType));
+		map.put("page", pointService.count(sample, chr, start, end,varAnnoGroupType,hgmdType));
 		return map;
 	}
 	
 	@RequestMapping("/symbol")
-	public @ResponseBody HashMap<String, Object> listAFPoint(@RequestParam("sample") String sample,@RequestParam("symbol") String symbol,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno", defaultValue="ALL") String varAnnoGroupType) {
+	public @ResponseBody HashMap<String, Object> listAFPoint(@RequestParam("sample") String sample,@RequestParam("symbol") String symbol,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno", defaultValue="ALL") String varAnnoGroupType, @RequestParam(value="hgmd",defaultValue="ALL") String hgmdType) {
 		if("pl choose".equals(varAnnoGroupType))
 			varAnnoGroupType = "ALL";
+
+		if("pl choose".equals(hgmdType))
+			hgmdType = "ALL";
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("list", pointService.listAFPoints(sample, symbol,offset,maxResult,varAnnoGroupType));
-		map.put("page", pointService.count(sample, symbol,varAnnoGroupType));
+		map.put("list", pointService.listAFPoints(sample, symbol,offset,maxResult,varAnnoGroupType,hgmdType));
+		map.put("page", pointService.count(sample, symbol,varAnnoGroupType,hgmdType));
 		return map;
 	}
 	
 	@RequestMapping("/nm")
-	public @ResponseBody HashMap<String, Object> listAFPointByNm(@RequestParam("sample") String sample, @RequestParam("nm") String nm,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno", defaultValue="ALL") String varAnnoGroupType) {
+	public @ResponseBody HashMap<String, Object> listAFPointByNm(@RequestParam("sample") String sample, @RequestParam("nm") String nm,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno", defaultValue="ALL") String varAnnoGroupType,@RequestParam(value="hgmd",defaultValue="ALL") String hgmdType) {
 		if("pl choose".equals(varAnnoGroupType))
 			varAnnoGroupType = "ALL";
+
+		if("pl choose".equals(hgmdType))
+			hgmdType = "ALL";
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("list", pointService.listAFPointsByNm(sample, nm,offset,maxResult,varAnnoGroupType));
-		map.put("page", pointService.countByNm(sample, nm,varAnnoGroupType));
+		map.put("list", pointService.listAFPointsByNm(sample, nm,offset,maxResult,varAnnoGroupType,hgmdType));
+		map.put("page", pointService.countByNm(sample, nm,varAnnoGroupType,hgmdType));
 		return map;
 	}
 	
@@ -127,6 +141,13 @@ public class ApiViewController {
 		VarAnnoPoint point = pointService.queryVarAnnoPoint(chr, pos, ref, alt);
 		model.addAttribute("varAnno", point);
 		return "/PointDetail/varAnno_Form";
+	}
+	
+	@RequestMapping("hgmd/{chr}/{pos}/{ref}/{alt}")
+	public String queryHGMD(@PathVariable String chr, @PathVariable int pos, @PathVariable String ref, @PathVariable String alt, Model model) {
+		HgmdPoint point = pointService.queryHgmdPoint(chr, pos, ref, alt);
+		model.addAttribute("hgmd", point);
+		return "/PointDetail/hgmd_Form";
 	}
 	
 	@RequestMapping(value="/batchupdate/{sampleId}", method=RequestMethod.POST)

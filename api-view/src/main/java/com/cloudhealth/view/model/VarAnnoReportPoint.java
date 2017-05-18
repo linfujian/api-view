@@ -1,10 +1,7 @@
 package com.cloudhealth.view.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import com.cloudhealth.view.entity.VarAnnoPoint;
 
-@Entity @IdClass(PosPointId.class)
 public class VarAnnoReportPoint {
 
 	private  VarAnnoPoint getVarAnnoPointInstance(){
@@ -14,20 +11,21 @@ public class VarAnnoReportPoint {
 			return varAnnoPoint;
 		}
 	}
-	@Id
+
 	private String CHROM;
 	
-	@Id
-	private String POS;
+	private String START;
 	
-	@Id
+	private String END;
+	
 	private String REF;
 	
-	@Id
 	private String ALT;
 	
 	private String RS;	
 	private String GeneSymbol;
+	private String Func;
+	private String ExonicFunc;
 	private String Cdot;
 	private String Pdot;
 	private String Category;
@@ -44,11 +42,18 @@ public class VarAnnoReportPoint {
 		this.CHROM = CHROM;
 	}
 	
-	public String getPOS() {
-		return POS;
+	public String getSTART() {
+		return START;
 	}
-	public void setPOS(String POS) {
-		this.POS = POS;
+	public void setSTART(String START) {
+		this.START = START;
+	}
+	
+	public String getEND() {
+		return END;
+	}
+	public void setEND(String END) {
+		this.END = END;
 	}
 	
 	public String getREF() {
@@ -77,6 +82,20 @@ public class VarAnnoReportPoint {
 	}
 	public void setGeneSymbol(String GeneSymbol) {
 		this.GeneSymbol = GeneSymbol;
+	}
+	
+	public String getFunc() {
+		return Func;
+	}
+	public void setFunc(String Func) {
+		this.Func = Func;
+	}
+	
+	public String getExonicFunc() {
+		return ExonicFunc;
+	}
+	public void setExonicFunc(String ExonicFunc) {
+		this.ExonicFunc = ExonicFunc;
 	}
 	
 	public String getCdot() {
@@ -118,11 +137,14 @@ public class VarAnnoReportPoint {
 	public VarAnnoPoint getVarAnnoPoint(){
 		varAnnoPoint = getVarAnnoPointInstance();
 		varAnnoPoint.setCHROM(this.CHROM);
-		varAnnoPoint.setPOS(this.POS);
+		varAnnoPoint.setSTART(this.START);
+		varAnnoPoint.setEND(this.END);
 		varAnnoPoint.setREF(this.REF);
 		varAnnoPoint.setALT(this.ALT);
 		varAnnoPoint.setRS(this.RS);
 		varAnnoPoint.setGeneSymbol(this.GeneSymbol);
+		varAnnoPoint.setFunc(this.Func);
+		varAnnoPoint.setExonicFunc(this.ExonicFunc);
 		varAnnoPoint.setCdot(this.Cdot);
 		varAnnoPoint.setPdot(this.Pdot);
 		varAnnoPoint.setCategory(this.Category);

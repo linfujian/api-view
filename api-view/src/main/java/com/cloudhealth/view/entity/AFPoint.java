@@ -1,8 +1,9 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import com.cloudhealth.view.id.PosPointId;
 
 @Entity @IdClass(PosPointId.class)
 public class AFPoint {
@@ -67,6 +68,11 @@ public class AFPoint {
 	private String CLNSIG_clinvar; 
 	public void setCLNSIG_clinvar(String CLNSIG_clinvar){this.CLNSIG_clinvar = CLNSIG_clinvar;}
 	public String getCLNSIG_clinvar(){return CLNSIG_clinvar;}
+	
+	//2017.5.15 add
+	private String CLASS;
+	public void setCLASS(String CLASS) {this.CLASS = CLASS;}
+	public String getCLASS(){return CLASS;}
 	
 	//2017.5.4 add
 	private String Category;

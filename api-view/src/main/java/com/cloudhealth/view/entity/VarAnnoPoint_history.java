@@ -1,4 +1,4 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.entity;
 
 import java.util.Date;
 
@@ -12,6 +12,10 @@ public class VarAnnoPoint_history {
 	private String revision;
 	private Date datetime;
 	private String action;
+	private String Func;
+	private String ExonicFunc;
+	private String Cdot;
+	private String Pdot;
 	private String Category;
 	private String Comments;
 	private String OperUser;
@@ -35,6 +39,34 @@ public class VarAnnoPoint_history {
 	}
 	public void setAction(String action) {
 		this.action = action;
+	}
+	
+	public String getFunc() {
+		return Func;
+	}
+	public void setFunc(String Func) {
+		this.Func = Func;
+	}
+	
+	public String getExonicFunc() {
+		return ExonicFunc;
+	}
+	public void setExonicFunc(String ExonicFunc) {
+		this.ExonicFunc = ExonicFunc;
+	}
+	
+	public String getCdot() {
+		return Cdot;
+	}
+	public void setCdot(String Cdot) {
+		this.Cdot = Cdot;
+	}
+	
+	public String getPdot() {
+		return Pdot;
+	}
+	public void setPdot(String Pdot) {
+		this.Pdot = Pdot;
 	}
 	
 	public String getCategory() {

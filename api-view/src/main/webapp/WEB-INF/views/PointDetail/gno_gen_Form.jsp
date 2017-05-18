@@ -9,16 +9,16 @@
 			<c:out value="${gno_gen.CHROM}" />
 		</div>
 	</div>
+	<div>
+		<label>START</label>
 		<div>
-		<label>POS</label>
-		<div>
-			<c:out value="${gno_gen.POS}" />
+			<c:out value="${gno_gen.START}" />
 		</div>
 	</div>
 	<div>
-		<label>RS</label>
+		<label>END</label>
 		<div>
-			<c:out value="${gno_gen.ID}" />
+			<c:out value="${gno_gen.END}" />
 		</div>
 	</div>
 	<div>
@@ -79,18 +79,6 @@
 		<label>AF_OTH</label>
 		<div>
 			<c:out value="${gno_gen.AF_OTH}" />
-		</div>
-	</div>
-	<div>
-		<label>AF_Male</label>
-		<div>
-			<c:out value="${gno_gen.AF_Male}" />
-		</div>
-	</div>
-	<div>
-		<label>AF_Female</label>
-		<div>
-			<c:out value="${gno_gen.AF_Female}" />
 		</div>
 	</div>
 </div>

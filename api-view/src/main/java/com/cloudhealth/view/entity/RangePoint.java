@@ -1,4 +1,4 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

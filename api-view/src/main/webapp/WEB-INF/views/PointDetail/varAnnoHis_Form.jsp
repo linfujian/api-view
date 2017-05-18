@@ -11,6 +11,10 @@
 			<th>Revision</th>
 			<th>DataTime</th>
 			<th>Action</th>
+			<th>Func</th>
+			<th>ExonicFunc</th>
+			<th>Cdot</th>
+			<th>Pdot</th>
 			<th>Category</th>
 			<th>Comments</th>
 			<th>OperUser</th>
@@ -22,6 +26,10 @@
 	  		<td><c:out value="${varAnno.revision}"></c:out></td>
 	  		<td><c:out value="${varAnno.datetime}"></c:out></td>
 	  		<td><c:out value="${varAnno.action}"></c:out></td>
+	  		<td><c:out value="${varAnno.func}"></c:out> </td>
+	  		<td><c:out value="${varAnno.exonicFunc}"></c:out> </td>
+	  		<td><c:out value="${varAnno.cdot}"></c:out> </td>
+	  		<td><c:out value="${varAnno.pdot}"></c:out> </td>
 	  		<td><c:out value="${varAnno.category}"></c:out></td>
 	  		<td><c:out value="${varAnno.comments}"></c:out></td>
 	  		<td><c:out value="${varAnno.operUser}"></c:out></td>

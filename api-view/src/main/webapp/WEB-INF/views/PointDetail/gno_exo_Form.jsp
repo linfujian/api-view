@@ -9,16 +9,16 @@
 			<c:out value="${gno_exo.CHROM}" />
 		</div>
 	</div>
+	<div>
+		<label>START</label>
 		<div>
-		<label>POS</label>
-		<div>
-			<c:out value="${gno_exo.POS}" />
+			<c:out value="${gno_exo.START}" />
 		</div>
 	</div>
 	<div>
-		<label>RS</label>
+		<label>END</label>
 		<div>
-			<c:out value="${gno_exo.ID}" />
+			<c:out value="${gno_exo.END}" />
 		</div>
 	</div>
 	<div>
@@ -85,18 +85,6 @@
 		<label>AF_SAS</label>
 		<div>
 			<c:out value="${gno_exo.AF_SAS}" />
-		</div>
-	</div>
-	<div>
-		<label>AF_Male</label>
-		<div>
-			<c:out value="${gno_exo.AF_Male}" />
-		</div>
-	</div>
-	<div>
-		<label>AF_Female</label>
-		<div>
-			<c:out value="${gno_exo.AF_Female}" />
 		</div>
 	</div>
 </div>

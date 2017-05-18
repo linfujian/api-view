@@ -1,4 +1,4 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.id;
 
 import java.io.Serializable;
 

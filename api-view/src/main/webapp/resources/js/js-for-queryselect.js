@@ -21,8 +21,8 @@ $(document).ready(function() {
 	        of: window,
 			modal : true,
 			resizable : false,
-			width:600,
-			height:600,
+			width:900,
+			height:300,
 			close : function() {
 				//resetDialog($('#paperForm'));
 				$(this).dialog('close');
@@ -65,7 +65,8 @@ $(document).ready(function() {
 				"end": $('#range_end').val(),
 				"offset":0,
 				"maxResults":20,
-				"varAnno":$("#groupVarAnno").val()
+				"varAnno":$("#groupVarAnno").val(),
+				"hgmd":$("#groupHGMD").val()
 			},
 			
 			success: function(msg) {
@@ -89,7 +90,8 @@ $(document).ready(function() {
 				"sample":$('#input_sample').val(),
 				"offset":0,
 				"maxResults":20,
-				"varAnno":$("#groupVarAnno").val()
+				"varAnno":$("#groupVarAnno").val(),
+				"hgmd":$("#groupHGMD").val()
 			},
 			
 			success: function(msg) {
@@ -113,7 +115,8 @@ $(document).ready(function() {
 				"nm":$('#nm').val(),
 				"offset":0,
 				"maxResults":20,
-				"varAnno":$("#groupVarAnno").val()
+				"varAnno":$("#groupVarAnno").val(),
+				"hgmd":$("#groupHGMD").val()
 			},
 			
 			success: function(msg) {
@@ -128,12 +131,13 @@ $(document).ready(function() {
 	
 	function constructTable(msg) {
 		var varAnnoGroupType = $("#groupVarAnno").val();
-		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"6\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th><th style=\"text-align:center;\" colspan=\"4\">VarAnno</th><th style=\"text-align:center;\">Report?</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>RS</th><th>Symbol</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th><th>Group by<select id=\"groupVarAnno\"><option selected>' + varAnnoGroupType + '</option><option value=\"ALL\">ALL</option><option value=\"Benign\">Benign</option><option value=\"Likely Benign\">Likely Benign</option><option value=\"Vus\">Vus</option><option value=\"Likely Path\">Likely Path</option><option value=\"Path\">Path</option><option value=\"Other\">Other</option></select></th><th>Comments</th><th>VarAnnoDetail</th><th>History</th><th></th></tr></thead><tbody>';
+		var hgmdType = $("#groupHGMD").val();
+		var content = '<table class=\"table table-condensed\"><thead><tr><th>#</th><th style=\"text-align:center;\" colspan=\"6\">Site Information</th><th style=\"text-align:center;\" colspan=\"5\">Frequency</th><th  style=\"text-align:center;\" colspan=\"2\">Clinical</th><th>HGMD</th><th style=\"text-align:center;\" colspan=\"4\">VarAnno</th><th style=\"text-align:center;\">Report?</th></tr><tr><th>N.O</th><th>CHROM</th><th>POS</th><th>REF</th><th>ALT</th><th>RS</th><th>Symbol</th><th>gno_genome</th><th>gno_exomes</th><th>1kg</th><th>esp</th><th>exac</th><th>SIFT_score/Polyphen2_HDIV_score</th><th>clinvar</th><th><select id=\"groupHGMD\"><option selected>' + hgmdType + '</option><option value=\"ALL\">ALL</option><option value=\"DM\">DM</option><option value=\"DM?\">DM?</option><option value=\"DP\">DP</option><option value=\"FP\">FP</option><option value=\"DFP\">DFP</option><option value=\"R\">R</option></select></th><th>Group by<select id=\"groupVarAnno\"><option selected>' + varAnnoGroupType + '</option><option value=\"ALL\">ALL</option><option value=\"Benign\">Benign</option><option value=\"Likely Benign\">Likely Benign</option><option value=\"Vus\">Vus</option><option value=\"Likely Path\">Likely Path</option><option value=\"Path\">Path</option><option value=\"Other\">Other</option></select></th><th>Comments</th><th>VarAnnoDetail</th><th>History</th><th></th></tr></thead><tbody>';
 		
 		$.each(msg.list, function(index,item){
 			var param = '\'' + item.CHROM + '\',\'' + item.POS + '\',\'' + item.REF + '\',\'' + item.ALT + '\'';
-			content += '<tr><td><a href=\"genomebrowse:/api/zoom?locus=' + item.CHROM + ':' + item.POS + '-' + item.POS + '\">' +  (index+1) + '</a></td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].CHROM\" value=\"' + item.CHROM + '\" />' + item.CHROM + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].POS\" value=\"' + item.POS + '\" />' + item.POS + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].REF\" value=\"' + item.REF + '\" />' + item.REF + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].ALT\" value=\"' + item.ALT + '\" />' + item.ALT + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].RS\" value=\"' + item.RS + '\" /><a style=\"color:blue;\">' + item.RS +'</a></td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].GeneSymbol\" value=\"' + item.Symbol + '\" /><a style=\"color:red;\">' + item.Symbol + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_gen\',' + param + ')\">' + item.AF_gno_genome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_exo\',' + param + ')\">' +item.AF_gno_exome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'onekg\',' + param + ')\">' + item.AF_EAS_1kg + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'esp\',' + param + ')\">' + item.AF_ALL_esp + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'exac\',' + param + ')\">' + item.AF_ALL_exac + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'annovar\',' + param + ')\">' + item.SIFT_score + '/' + item.Polyphen2_HDIV_score + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'clinvar\',' + param + ')\">' + item.CLNSIG_clinvar +
-			'</a></td><td><select name=\"varAnnoPoints[' + index + '].Category\" class=\"selectpicker\"><option selected>' + item.Category + '</option><option>Benign</option><option>Likely Benign</option><option>Vus</option><option>Likely Path</option><option>Path</option><option>Other</option></select></td><td><input name=\"varAnnoPoints[' + index + '].Comments\" type=\"text\" maxlength=\"128\" value=\"' + item.Comments + '\" /></td><td><a href=\"#\" onclick=\"sendAjax(\'varAnnoDetail\',' + param + ')\">detail</a></td><td><button type=\"button\" class=\"btn btn-info\" onclick=\"sendAjax(\'history\',' + param + ')\">History</button></td><td><select name=\"varAnnoPoints[' + index + '].report\" class=\"selectpicker\"><option selected>' + item.REPORT + '</option><option>' + (item.REPORT=='no'? 'yes':'no') + '</option></select></td></tr>';
+			content += '<tr><td><a href=\"genomebrowse:/api/zoom?locus=' + item.CHROM + ':' + item.POS + '-' + item.POS + '\">' +  (index+1) + '</a></td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].CHROM\" value=\"' + item.CHROM + '\" />' + item.CHROM + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].START\" value=\"' + item.POS + '\" /><input type=\"hidden\" name=\"varAnnoPoints[' + index + '].END\" value=\"' + item.POS + '\" />' + item.POS + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].REF\" value=\"' + item.REF + '\" />' + item.REF + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].ALT\" value=\"' + item.ALT + '\" />' + item.ALT + '</td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].RS\" value=\"' + item.RS + '\" /><a style=\"color:blue;\">' + item.RS +'</a></td><td><input type=\"hidden\" name=\"varAnnoPoints[' + index +'].GeneSymbol\" value=\"' + item.Symbol + '\" /><a style=\"color:red;\">' + item.Symbol + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_gen\',' + param + ')\">' + item.AF_gno_genome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'gno_exo\',' + param + ')\">' +item.AF_gno_exome + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'onekg\',' + param + ')\">' + item.AF_EAS_1kg + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'esp\',' + param + ')\">' + item.AF_ALL_esp + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'exac\',' + param + ')\">' + item.AF_ALL_exac + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'annovar\',' + param + ')\">' + item.SIFT_score + '/' + item.Polyphen2_HDIV_score + '</a></td><td><a href=\"#\" onclick=\"sendAjax(\'clinvar\',' + param + ')\">' + item.CLNSIG_clinvar +
+			'</a></td><td><a href=\"\#" onclick=\"sendAjax(\'hgmd\',' + param +')\">' + item.CLASS + '</td><td><select name=\"varAnnoPoints[' + index + '].Category\" class=\"selectpicker\"><option selected>' + item.Category + '</option><option>Benign</option><option>Likely Benign</option><option>Vus</option><option>Likely Path</option><option>Path</option><option>Other</option></select></td><td><input name=\"varAnnoPoints[' + index + '].Comments\" type=\"text\" maxlength=\"128\" value=\"' + item.Comments + '\" /></td><td><a href=\"#\" onclick=\"sendAjax(\'varAnnoDetail\',' + param + ')\">detail</a></td><td><button type=\"button\" class=\"btn btn-info\" onclick=\"sendAjax(\'history\',' + param + ')\">History</button></td><td><select name=\"varAnnoPoints[' + index + '].report\" class=\"selectpicker\"><option selected>' + item.REPORT + '</option><option>' + (item.REPORT=='no'? 'yes':'no') + '</option></select></td></tr>';
 			
 		});
 		
@@ -194,7 +198,8 @@ $(document).ready(function() {
 					"end": $('#range_end').val(),
 					"offset":(num-1)*20,
 					"maxResults":20,
-					"varAnno":$('#groupVarAnno').val()
+					"varAnno":$('#groupVarAnno').val(),
+					"hgmd":$("#groupHGMD").val()
 				});
 			break;
 			case 'symbol_query':
@@ -204,7 +209,8 @@ $(document).ready(function() {
 					"sample":$('#input_sample').val(),
 					"offset":(num-1)*20,
 					"maxResults":20,
-					"varAnno":$('#groupVarAnno').val()
+					"varAnno":$('#groupVarAnno').val(),
+					"hgmd":$("#groupHGMD").val()
 						});
 			break;
 			case 'nm_query':
@@ -214,7 +220,8 @@ $(document).ready(function() {
 					"nm":$('#nm').val(),
 					"offset":(num-1)*20,
 					"maxResults":20,
-					"varAnno":$('#groupVarAnno').val()
+					"varAnno":$('#groupVarAnno').val(),
+					"hgmd":$("#groupHGMD").val()
 						});
 			break;
 		}
@@ -298,6 +305,13 @@ $(document).ready(function() {
 				$('#history_detail').dialog("option","title","VarAnnoHistory");
 				$('#history_detail').dialog('open');
 			}
+			
+			//query hgmd
+			if(type=='hgmd') {
+				$('#hgmd_detail').html(result);
+				$('#hgmd_detail').dialog("option","title","HGMD");
+				$('#hgmd_detail').dialog('open');
+			}
 		});
 	}
 	
@@ -329,6 +343,18 @@ $(document).ready(function() {
 	}*/
 	$(document).on('change','#groupVarAnno',function(){
 		
+		if($('#queryType').val() == 'range_query'){
+			$('#range_query').trigger('click');
+		}
+		if($('#queryType').val() == 'symbol_query'){
+			$('#symbol_query').trigger('click');
+		}
+		if($('#queryType').val() == 'nm_query'){
+			$('#nm_query').trigger('click');
+		}
+	});
+	
+	$(document).on('change','#groupHGMD',function(){
 		if($('#queryType').val() == 'range_query'){
 			$('#range_query').trigger('click');
 		}

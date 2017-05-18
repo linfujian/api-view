@@ -10,9 +10,15 @@
 		</div>
 	</div>
 	<div>
-		<label>POS</label>
+		<label>START</label>
 		<div>
-			<c:out value="${varAnno.POS}" />
+			<c:out value="${varAnno.START}" />
+		</div>
+	</div>
+	<div>
+		<label>END</label>
+		<div>
+			<c:out value="${varAnno.END}" />
 		</div>
 	</div>
 	<div>
@@ -37,6 +43,18 @@
 		<label>Gene Symbol</label>
 		<div>
 			<c:out value="${varAnno.geneSymbol}" />
+		</div>
+	</div>
+	<div>
+		<label>Func</label>
+		<div>
+			<c:out value="${varAnno.func}" />
+		</div>
+	</div>
+	<div>
+		<label>ExonicFunc</label>
+		<div>
+			<c:out value="${varAnno.exonicFunc}" />
 		</div>
 	</div>
 	<div>

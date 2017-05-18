@@ -1,10 +1,12 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+
+import com.cloudhealth.view.id.StartToEndPointId;
 
 @Entity @IdClass(StartToEndPointId.class)
 @Table(name="clinvar")

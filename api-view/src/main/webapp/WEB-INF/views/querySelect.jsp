@@ -77,6 +77,9 @@
 <div class="dialog" id="history_detail" style="display:none;">
 	<%@ include file="PointDetail/varAnnoHis_Form.jsp" %>
 </div>
+<div class="dialog" id="hgmd_detail" style="display:none;">
+	<%@ include file="PointDetail/hgmd_Form.jsp" %>
+</div>
 
 <script src='<c:url value="/web-resources/lib/jquery/jquery-3.2.0.min.js" />'></script>
 <script src='<c:url value="/web-resources/lib/jquery/bootpag.min.js" />'></script>

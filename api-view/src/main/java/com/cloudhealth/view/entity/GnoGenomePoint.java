@@ -1,24 +1,27 @@
-package com.cloudhealth.view.model;
+package com.cloudhealth.view.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 
-@Entity @IdClass(PosPointId.class)
-public class GnoExoPoint {
+import com.cloudhealth.view.id.StartToEndPointId;
+
+@Entity @IdClass(StartToEndPointId.class)
+public class GnoGenomePoint {
+
 	@Id
 	private String CHROM; 
 	public void setCHROM(String CHROM){this.CHROM = CHROM;}
 	public String getCHROM(){return CHROM;}
 	
 	@Id
-	private String POS;
-	public void setPOS(String POS){this.POS = POS;}
-	public String getPOS(){return POS;}
+	private String START;
+	public void setSTART(String START){this.START = START;}
+	public String getSTART(){return START;}
 	
-	private String ID; 
-	public void setID(String ID){this.ID = ID;}
-	public String getID(){return ID;}
+	private String END; 
+	public void setEND(String END){this.END = END;}
+	public String getEND(){return END;}
 	
 	@Id
 	private String REF; 
@@ -61,18 +64,5 @@ public class GnoExoPoint {
 	private String AF_OTH;
 	public void setAF_OTH(String AF_OTH){this.AF_OTH = AF_OTH;}
 	public String getAF_OTH(){return AF_OTH;}
-	
-	private String AF_SAS;
-	public void setAF_SAS(String AF_SAS){this.AF_SAS = AF_SAS;}
-	public String getAF_SAS(){return AF_SAS;}
-	
-	private String AF_Male;
-	public void setAF_Male(String AF_Male){this.AF_Male = AF_Male;}
-	public String getAF_Male(){return AF_Male;}
-	
-	private String AF_Female;
-	public void setAF_Female(String AF_Female){this.AF_Female = AF_Female;}
-	public String getAF_Female(){return AF_Female;}
-	
 	
 }
