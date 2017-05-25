@@ -24,6 +24,7 @@
 	    <div class="col-sm-5">
 	      <input type="text" class="form-control" id="input_sample" placeholder="SampleId">
 	    </div>
+	    <div><button>Query Sample's All</button></div>
 	  </div>
 	</form>
 	<div class="col-sm-offset-2 col-sm-12">
