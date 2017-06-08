@@ -11,8 +11,10 @@ import com.cloudhealth.view.entity.ExacPoint;
 import com.cloudhealth.view.entity.GnoExoPoint;
 import com.cloudhealth.view.entity.GnoGenomePoint;
 import com.cloudhealth.view.entity.HgmdPoint;
+import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
 import com.cloudhealth.view.entity.RangePoint;
+import com.cloudhealth.view.entity.ThreeSamplePoint;
 import com.cloudhealth.view.entity.VarAnnoPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint_history;
 import com.cloudhealth.view.model.VarAnnoReportPoint;
@@ -52,4 +54,12 @@ public interface PointDao {
 	
 	public String batchUpdate(List<VarAnnoReportPoint> varAnnoPoints, String sampleId);
 	
+	//find sampleID all hgmdvarannopoint 
+	public List<HgmdVarAnnoPoint> queryAll(String sampleID);
+	
+	//query three sample with range query
+	public List<ThreeSamplePoint> queryWithRange(String maleId,String femaleId, String child, String chr, int start, int end, int perpage, int offset, String hgmdSelect, String clinvarSelect);
+	
+	//count for three sample query
+	public BigInteger countThree(String child, String chr, int start, int end, String hgmdSelect, String clinvarSelect);
 }

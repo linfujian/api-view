@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +17,7 @@ import com.cloudhealth.view.entity.ExacPoint;
 import com.cloudhealth.view.entity.GnoExoPoint;
 import com.cloudhealth.view.entity.GnoGenomePoint;
 import com.cloudhealth.view.entity.HgmdPoint;
+import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint_history;
@@ -33,7 +33,7 @@ public class ApiViewController {
 	
 	@RequestMapping(value="/")
 	public String Query() {
-		return "/querySelect";
+		return "/queryTypeSelect";
 	}
 	
 	@RequestMapping("/range")
@@ -150,7 +150,7 @@ public class ApiViewController {
 	}
 	
 	@RequestMapping(value="/batchupdate/{sampleId}", method=RequestMethod.POST)
-	public @ResponseBody String batchUpdate(@ModelAttribute("pointForm") PointForm pointForm, @PathVariable String sampleId) {
+	public @ResponseBody String batchUpdate(PointForm pointForm, @PathVariable String sampleId) {
 
 		String message = pointService.batchUpdate(pointForm.getVarAnnoPoints(), sampleId);
 		if(("successUpdate").equals(message))
@@ -160,6 +160,85 @@ public class ApiViewController {
 		
 	}
 	
+	// function with react
+	@RequestMapping("/singlesampleall")
+	public String redirectUrl(){
+		return "/queryAll"; // react
+	}
 	
+	@RequestMapping("/singlesample")
+	public String redirectUrl2() {
+		return "/singleSelect"; //old jsp with ajax/jquery to organism html
+	}
+	
+	@RequestMapping("/threesample")
+	public String redirectUrl3() {
+		return "/threeSelect";
+	}
+	
+	// return DM/DM?/Path/Likely Path count and list
+	@RequestMapping("/queryallpoints/{sampleID}")
+	public @ResponseBody HashMap<String, Object> getAllPoints(@PathVariable("sampleID") String sampleID) {
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		List<HgmdVarAnnoPoint> list = pointService.queryAll(sampleID);
+		int dm = 0;
+		int dmdoubt = 0;
+		int path = 0;
+		int likelyPath = 0;
+		
+		for(HgmdVarAnnoPoint point : list) {
+			
+			if("DM".equals(point.getCLASS())){
+				dm++;
+			}
+			
+			if("DM?".equals(point.getCLASS())){
+				dmdoubt++;
+			}
+			
+			if("PATH".equals(point.getCategory())){
+				path++;
+			}
+			
+			if("LiPATH".equals(point.getCategory())){
+				likelyPath++;
+			}
+		}
+		
+		map.put("dm", dm);
+		map.put("dmdoubt", dmdoubt);
+		map.put("path", path);
+		map.put("likelyPath", likelyPath);
+		
+		map.put("list", list);
+		
+		return map;
+		
+	}
+	
+	//handle request from three sample compare
+	@RequestMapping("/queryrange")
+	public @ResponseBody HashMap<String, Object> queryFromRange(@RequestParam("chr") String chr, @RequestParam("start") int start, @RequestParam("end") int end,
+		@RequestParam("parentM") String parentM, @RequestParam("parentF") String parentF, @RequestParam("child") String child, @RequestParam("perpage") int perpage, 
+		@RequestParam("offset") int offset, @RequestParam("hgmdSelect") String hgmdSelect, @RequestParam("clinvarSelect") String clinvarSelect) {
+		
+		return pointService.queryWithRange(parentM, parentF, child, chr, start, end, perpage, offset,hgmdSelect,clinvarSelect);
+			
+	}
+	
+	@RequestMapping("/querysymbol")
+	public @ResponseBody HashMap<String, Object> queryFromSymbol(@RequestParam("symbol") String symbol, @RequestParam("parentM") String parentM, @RequestParam("parentF") String parentF, @RequestParam("child") String child, @RequestParam("perpage") int perpage, @RequestParam("offset") int offset,
+			@RequestParam("hgmdSelect") String hgmdSelect, @RequestParam("clinvarSelect") String clinvarSelect) {
+		
+		return pointService.queryWithSymbol(parentF, parentM, child, symbol, perpage, offset,hgmdSelect,clinvarSelect);
+	}
+	
+	@RequestMapping("/querynm")
+	public @ResponseBody HashMap<String, Object> queryFromNm(@RequestParam("nm") String nm, @RequestParam("parentM") String parentM, @RequestParam("parentF") String parentF, @RequestParam("child") String child, @RequestParam("perpage") int perpage, @RequestParam("offset") int offset,
+			@RequestParam("hgmdSelect") String hgmdSelect, @RequestParam("clinvarSelect") String clinvarSelect) {
+		
+		return pointService.queryWithNm(parentM, parentF, child, nm, perpage, offset,hgmdSelect,clinvarSelect);
+	}
 	
 }

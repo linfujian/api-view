@@ -2,6 +2,7 @@ package com.cloudhealth.view.service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.cloudhealth.view.entity.ExacPoint;
 import com.cloudhealth.view.entity.GnoExoPoint;
 import com.cloudhealth.view.entity.GnoGenomePoint;
 import com.cloudhealth.view.entity.HgmdPoint;
+import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
 import com.cloudhealth.view.entity.RangePoint;
 import com.cloudhealth.view.entity.VarAnnoPoint;
@@ -115,6 +117,37 @@ public class PointServiceImpl implements PointService {
 	//point query for hgmd
 	public HgmdPoint queryHgmdPoint(String chr, int pos, String ref, String alt) {
 		return pointDao.queryHgmd(chr, pos, ref, alt);
+	}
+
+	public List<HgmdVarAnnoPoint> queryAll(String sampleID) {
+		return pointDao.queryAll(sampleID);
+	}
+
+	public HashMap<String, Object> queryWithRange(String maleId, String femaleId, String child, String chr, int start,
+			int end, int perpage, int offset, String hgmdSelect, String clinvarSelect) {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("count", pointDao.countThree(child, chr, start, end,hgmdSelect,clinvarSelect));
+		map.put("list", pointDao.queryWithRange(maleId, femaleId, child, chr, start, end, perpage, offset,hgmdSelect,clinvarSelect));
+		return map;
+		
+	}
+
+	public HashMap<String, Object> queryWithSymbol(String maleId, String femaleId, String child, String symbol,
+			int perpage, int offset, String hgmdSelect, String clinvarSelect) {
+		RangePoint rangePoint = pointDao.findRangeBySymbol(symbol);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("count", pointDao.countThree(child, rangePoint.getChr_name().substring(rangePoint.getChr_name().indexOf("chr")+3), Integer.parseInt(rangePoint.getTx_start()), Integer.parseInt(rangePoint.getTx_end()),hgmdSelect,clinvarSelect));
+		map.put("list", pointDao.queryWithRange(maleId, femaleId, child, rangePoint.getChr_name().substring(rangePoint.getChr_name().indexOf("chr")+3), Integer.parseInt(rangePoint.getTx_start()), Integer.parseInt(rangePoint.getTx_end()), perpage, offset,hgmdSelect,clinvarSelect));
+		return map;
+	}
+
+	public HashMap<String, Object> queryWithNm(String maleId, String femaleId, String child, String nm, int perpage,
+			int offset,String hgmdSelect, String clinvarSelect) {
+		RangePoint rangePoint = pointDao.findRangeByNm(nm);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("count", pointDao.countThree(child, rangePoint.getChr_name().substring(rangePoint.getChr_name().indexOf("chr")+3), Integer.parseInt(rangePoint.getTx_start()), Integer.parseInt(rangePoint.getTx_end()),hgmdSelect,clinvarSelect));
+		map.put("list", pointDao.queryWithRange(maleId, femaleId, child, rangePoint.getChr_name().substring(rangePoint.getChr_name().indexOf("chr")+3), Integer.parseInt(rangePoint.getTx_start()), Integer.parseInt(rangePoint.getTx_end()), perpage, offset,hgmdSelect,clinvarSelect));
+		return map;
 	}
 	
 }
