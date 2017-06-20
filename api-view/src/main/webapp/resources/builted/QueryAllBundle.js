@@ -22490,7 +22490,11 @@
 	      var queryVal = document.getElementById('SampleID').value;
 	      _axios2.default.get('queryallpoints/' + queryVal, { 'Content-Type': 'application/json' }).then(function (response) {
 	        if (response.status === 200) {
+	
 	          _this2.setState({ points: response.data.list, filteredPoints: response.data.list, DM: response.data.dm, DMdoubt: response.data.dmdoubt, Path: response.data.path, LikelyPath: response.data.likelyPath });
+	          if (_this2.state.points.length === 0) {
+	            alert('no corresponding sampleId exist in db');
+	          }
 	        }
 	      });
 	    }
@@ -22526,27 +22530,37 @@
 	      return _react2.default.createElement(
 	        'form',
 	        { className: 'form-inline' },
+	        _react2.default.createElement('br', null),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'form-group' },
 	          _react2.default.createElement(
 	            'label',
 	            null,
-	            'SampleID:'
+	            'SampleId'
 	          ),
+	          '\xA0\xA0\xA0\xA0',
 	          _react2.default.createElement('input', { className: 'form-control', id: 'SampleID', type: 'text', placeholder: 'pl input SampleID...' }),
+	          '\xA0\xA0\xA0',
 	          _react2.default.createElement(
 	            'button',
 	            { type: 'button', className: 'btn btn-default', onClick: this.sendAxios },
 	            'Query'
 	          )
 	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
 	        _react2.default.createElement(
 	          'div',
-	          null,
+	          { className: 'form-group' },
 	          _react2.default.createElement(_SearchBar2.default, { onUserInput: this.handleUserInput })
 	        ),
-	        _react2.default.createElement(_NumberCount2.default, { DM: this.state.DM, DMdoubt: this.state.DMdoubt, Path: this.state.Path, LikelyPath: this.state.LikelyPath }),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group' },
+	          _react2.default.createElement(_NumberCount2.default, { DM: this.state.DM, DMdoubt: this.state.DMdoubt, Path: this.state.Path, LikelyPath: this.state.LikelyPath })
+	        ),
 	        _react2.default.createElement(
 	          'div',
 	          null,
@@ -26256,12 +26270,12 @@
 	            _react2.default.createElement(
 	              'td',
 	              null,
-	              'CLASS'
+	              'HGMD CLASS'
 	            ),
 	            _react2.default.createElement(
 	              'td',
 	              null,
-	              'Category'
+	              'VarAnno Category'
 	            )
 	          )
 	        ),
@@ -26428,12 +26442,13 @@
 	        _react2.default.createElement(
 	          'label',
 	          null,
-	          'CLASS:'
+	          'CLASS'
 	        ),
+	        '\xA0\xA0\xA0\xA0',
 	        _react2.default.createElement(
 	          'select',
 	          {
-	            className: '',
+	            className: 'form-control',
 	            defaultValue: this.state.classFilter,
 	            onChange: this.handleClassFilterChange
 	          },
@@ -26453,15 +26468,17 @@
 	            'DM?'
 	          )
 	        ),
+	        '\xA0\xA0\xA0\xA0',
 	        _react2.default.createElement(
 	          'label',
 	          null,
-	          'Category:'
+	          'Category'
 	        ),
+	        '\xA0\xA0\xA0\xA0',
 	        _react2.default.createElement(
 	          'select',
 	          {
-	            className: '',
+	            className: 'form-control',
 	            defaultValue: this.state.categoryFilter,
 	            onChange: this.handleCategoryFilterChange
 	          },
@@ -26472,13 +26489,13 @@
 	          ),
 	          _react2.default.createElement(
 	            'option',
-	            { value: 'Path' },
-	            'Path'
+	            { value: 'PATH' },
+	            'PATH'
 	          ),
 	          _react2.default.createElement(
 	            'option',
-	            { value: 'Likely Path' },
-	            'Likely Path'
+	            { value: 'LiPATH' },
+	            'LiPATH'
 	          )
 	        )
 	      );

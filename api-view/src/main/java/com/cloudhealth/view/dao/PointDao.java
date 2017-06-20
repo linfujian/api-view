@@ -15,6 +15,7 @@ import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
 import com.cloudhealth.view.entity.RangePoint;
 import com.cloudhealth.view.entity.ThreeSamplePoint;
+import com.cloudhealth.view.entity.TrioDiffGroup;
 import com.cloudhealth.view.entity.VarAnnoPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint_history;
 import com.cloudhealth.view.model.VarAnnoReportPoint;
@@ -62,4 +63,19 @@ public interface PointDao {
 	
 	//count for three sample query
 	public BigInteger countThree(String child, String chr, int start, int end, String hgmdSelect, String clinvarSelect);
+	
+	//list the sampleId from db
+	public List<String> countSampleId();
+	
+	//list trio diff group in triDiff table
+	public List<TrioDiffGroup> listTrioGroup();
+	
+	//query child diff with parent
+	public List<ThreeSamplePoint> queryChildDiffParent(String maleId,String femaleId, String child, int perpage, int offset, String hgmdSelect, String clinvarSelect);
+	
+	//count for child diff parent
+	public BigInteger countChildDiff(String maleId,String femaleId, String child, int perpage, int offset, String hgmdSelect, String clinvarSelect);
+	
+	//handle TrioDiff Analyze
+	public String handleTrioAnalyze(String child,String father,String mother);
 }

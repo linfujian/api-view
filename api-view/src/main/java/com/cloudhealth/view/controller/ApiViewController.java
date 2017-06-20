@@ -1,15 +1,20 @@
 package com.cloudhealth.view.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import com.cloudhealth.view.entity.AnnovarPoint;
 import com.cloudhealth.view.entity.ClinvarPoint;
 import com.cloudhealth.view.entity.EspPoint;
@@ -32,7 +37,10 @@ public class ApiViewController {
 	PointService pointService;
 	
 	@RequestMapping(value="/")
-	public String Query() {
+	public String Query(Model model) {
+		
+		model.addAttribute("sampleIds", pointService.listSampleId());
+		model.addAttribute("trioDiffIds",pointService.listTrioDiffGroup());
 		return "/queryTypeSelect";
 	}
 	
@@ -239,6 +247,65 @@ public class ApiViewController {
 			@RequestParam("hgmdSelect") String hgmdSelect, @RequestParam("clinvarSelect") String clinvarSelect) {
 		
 		return pointService.queryWithNm(parentM, parentF, child, nm, perpage, offset,hgmdSelect,clinvarSelect);
+	}
+	
+	//handle request from query all three sample diff
+	@RequestMapping("/queryAllDiff")
+	public @ResponseBody HashMap<String, Object> queryForAllTrioDiff(@RequestParam("parentM") String parentM, @RequestParam("parentF") String parentF, @RequestParam("child") String child, @RequestParam("perpage") int perpage, @RequestParam("offset") int offset,
+			@RequestParam("hgmdSelect") String hgmdSelect, @RequestParam("clinvarSelect") String clinvarSelect) {
+		
+		return pointService.queryChildDiffParent(parentM, parentF, child, perpage, offset, hgmdSelect, clinvarSelect);
+	}
+	
+	//handle request from trio diff analytics
+	@RequestMapping(value="triodiffanalytics", method=RequestMethod.GET)
+	public String returnPage() {
+		return "/trioDiffAnalytics";
+	}
+	@RequestMapping(value="handleTrioDiff/{child}/{father}/{mother}", method=RequestMethod.GET)
+	public @ResponseBody String handleTrioAnalyze(@PathVariable("child") String child, 
+												  @PathVariable("father") String father, 
+												  @PathVariable("mother") String mother) {
+		
+		return pointService.handleTrioDiffAnalyze(child, father, mother);
+	}
+	
+	//upload vcf File 
+	@RequestMapping(value="uploadvcf", method= RequestMethod.GET)
+	public String returnUploadPage() {
+		return "/uploadVCF";
+	}
+	
+	//TODO
+	@RequestMapping(value="uploadvcf", method=RequestMethod.POST)
+	public @ResponseBody String uploadFile(@RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
+		if(! file.isEmpty()) {
+			try {
+				byte[] bytes= file.getBytes();
+				
+				//creating the directory to store file
+				String rootPath = System.getProperty("catalina.home");
+				File dir = new File(rootPath + File.separator + "tmpFiles");
+				if(! dir.exists())
+					dir.mkdirs();
+				
+				//create the file on server
+				File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+				stream.write(bytes);
+				stream.flush();
+				stream.close();
+				
+				System.out.println("Server File Location=" + serverFile.getAbsolutePath());
+				
+				//TODO
+				return "You successfully upload file " + name;
+			} catch (Exception e) {
+				return "You failed to upload " + name + "=>" + e.getMessage();
+			}
+		} else {
+			return "You failed to upload " + name + " because the file is empty";
+		}
 	}
 	
 }

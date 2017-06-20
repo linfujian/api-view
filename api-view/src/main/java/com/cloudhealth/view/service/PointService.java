@@ -14,6 +14,7 @@ import com.cloudhealth.view.entity.GnoGenomePoint;
 import com.cloudhealth.view.entity.HgmdPoint;
 import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
+import com.cloudhealth.view.entity.TrioDiffGroup;
 import com.cloudhealth.view.entity.VarAnnoPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint_history;
 import com.cloudhealth.view.model.VarAnnoReportPoint;
@@ -68,5 +69,17 @@ public interface PointService {
 	
 	//query for threesample with nm
 	public HashMap<String, Object> queryWithNm(String maleId,String femaleId, String child, String nm, int perpage, int offset, String hgmdSelect, String clinvarSelect);
+	
+	//query for child diff both parent
+	public HashMap<String, Object> queryChildDiffParent(String maleId,String femaleId, String child, int perpage, int offset, String hgmdSelect, String clinvarSelect);
+	
+	//count sampleId number in db
+	public List<String> listSampleId();
+	
+	//list trioDiffGroup
+	public List<TrioDiffGroup> listTrioDiffGroup();
+	
+	//handle trioDiff analyze
+	public String handleTrioDiffAnalyze(String child, String father, String mother);
 	
 }

@@ -19,6 +19,7 @@ import com.cloudhealth.view.entity.HgmdPoint;
 import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
 import com.cloudhealth.view.entity.RangePoint;
+import com.cloudhealth.view.entity.TrioDiffGroup;
 import com.cloudhealth.view.entity.VarAnnoPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint_history;
 import com.cloudhealth.view.model.VarAnnoReportPoint;
@@ -150,4 +151,26 @@ public class PointServiceImpl implements PointService {
 		return map;
 	}
 	
+	//query child both diff parent
+	public HashMap<String, Object> queryChildDiffParent(String maleId, String femaleId, String child, int perpage, int offset, String hgmdSelect, String clinvarSelect) {
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("list", pointDao.queryChildDiffParent(maleId, femaleId, child, perpage, offset, hgmdSelect, clinvarSelect));
+		map.put("count", pointDao.countChildDiff(maleId, femaleId, child, perpage, offset, hgmdSelect, clinvarSelect));
+		return map;
+	}
+
+	public List<String> listSampleId() {
+		return pointDao.countSampleId();
+	}
+
+	public List<TrioDiffGroup> listTrioDiffGroup() {
+		return pointDao.listTrioGroup();
+	}
+	
+	public String handleTrioDiffAnalyze(String child,String father,String mother) {
+		return pointDao.handleTrioAnalyze(child, father, mother);
+	}
+
 }
