@@ -1,9 +1,11 @@
 package com.cloudhealth.view.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-
 import com.cloudhealth.view.entity.AFPoint;
 import com.cloudhealth.view.entity.AnnovarPoint;
 import com.cloudhealth.view.entity.ClinvarPoint;
@@ -81,5 +83,8 @@ public interface PointService {
 	
 	//handle trioDiff analyze
 	public String handleTrioDiffAnalyze(String child, String father, String mother);
+	
+	//upload file to db
+	public void uploadFile(String path) throws FileNotFoundException, IOException,IllegalArgumentException, SQLException;
 	
 }

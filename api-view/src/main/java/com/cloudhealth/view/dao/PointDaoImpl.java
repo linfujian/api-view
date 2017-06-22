@@ -1,13 +1,19 @@
 package com.cloudhealth.view.dao;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +29,6 @@ import com.cloudhealth.view.entity.HgmdPoint;
 import com.cloudhealth.view.entity.HgmdVarAnnoPoint;
 import com.cloudhealth.view.entity.OnekgPoint;
 import com.cloudhealth.view.entity.RangePoint;
-import com.cloudhealth.view.entity.SampleToTrioCompare;
 import com.cloudhealth.view.entity.ThreeSamplePoint;
 import com.cloudhealth.view.entity.TrioDiffGroup;
 import com.cloudhealth.view.entity.TrioDiffPoint;
@@ -514,6 +519,99 @@ public class PointDaoImpl implements PointDao {
 			return "it has been analyzed before this analyze, you can query in Trio Sample Query";
 		}
 		
+	}
+	
+	public void doStore(final BufferedReader br) {
+		
+		final String sql = "INSERT INTO sampleinfor(CHROM ,POS ,ID ,REF  ,ALT  ,QUAL  ,FILTER ,AB  ,ABP  ,AC  ,AF  ,AN  ,CIGAR  ,DPB  ,DPRA  ,EPP  ,EPPR  ,GTI  ,LEN  ,MEANALT  ,MQM  ,MQMR  ,NS  ,NUMALT  ,ODDS  ,PAIRED  ,PAIREDR  ,PAO  ,PQA  ,PQR  ,PRO  ,RPL  ,RPP  ,RPPR  ,RPR  ,RUN  ,SAF  ,SAP  ,SAR  ,SRF  ,SRP  ,SRR  ,TYPE  ,GT  ,DP  ,RO  ,QR  ,AO  ,QA  ,GL  ,SAMPLE ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			
+			Session session = getSessionFactory().openSession();
+			session.doWork(
+					new Work() {
+						
+						public void execute(Connection conn) throws SQLException {
+							PreparedStatement stm = null;
+							
+							try {
+								ArrayList<String> single;
+								
+								stm = conn.prepareStatement(sql);
+								
+								conn.setAutoCommit(false);
+								
+								//去除不相关信息
+								String line;
+								while(!(line = br.readLine()).contains("#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT"))
+									continue;
+								//对待第一行取SAMPLE
+								String[] first = line.split("\t");
+								String sample = first[first.length-1];
+								int count = 0;
+								while((line = br.readLine()) != null) {
+									
+									 single= separateData(line);
+									 
+									 stm.setString(1, single.get(0));
+									 stm.setInt(2, Integer.valueOf(single.get(1)));
+									 
+									 for(int i=2;i<single.size();i++){
+										 stm.setString(i+1, single.get(i));
+									 }
+ 									 stm.setString(51, sample);//最后一列ID
+									 
+									 stm.addBatch();//加入批处理
+									 if(count ++ > 5000) {
+										 stm.executeBatch(); //每5000条执行一次批处理
+										 conn.commit();
+										 count = 0;
+									 }
+										 
+								}
+								stm.executeBatch(); //最后再执行一次批处理
+								conn.commit();
+								conn.close();
+								
+							} catch (IOException e) {
+								e.printStackTrace();
+							} finally {
+								stm.close();
+								conn.close();
+								
+							}
+						}
+						
+						//对每一行进行处理
+						private  ArrayList<String> separateData(String string) {
+							ArrayList<String> result = new ArrayList<String>();
+							String[] strings = string.split("\t");
+							for(int i=0; i<7;i++){ //添加CHROM到FILTER
+								result.add(strings[i]);
+							}
+							
+							//对INFO行做特殊处理
+							String seven = strings[7];
+							String[] result1 = seven.split(";");
+							HashMap<String, String> map = new HashMap<String,String>();
+							for(String string2: result1){
+								String key = string2.split("=")[0];
+								String value = string2.split("=")[1];
+								map.put(key, value);
+							}
+							String[] columns = {"AB","ABP","AC","AF","AN","CIGAR","DPB","DPRA","EPP","EPPR","GTI","LEN","MEANALT","MQM","MQMR","NS","NUMALT","ODDS","PAIRED","PAIREDR","PAO","PQA","PQR","PRO","RPL","RPP","RPPR","RPR","RUN","SAF","SAP","SAR","SRF","SRP","SRR","TYPE"};
+							for(String key: columns)
+								result.add(map.get(key));
+							
+							//对FORMAT行进行特殊处理
+							String eight = strings[9];
+							String[] result2 = eight.split(":");
+							for(String string3: result2){
+								result.add(string3);
+							}
+							
+							return result;
+							
+						}
+					});
 	}
 	
 	private Session getSession() {

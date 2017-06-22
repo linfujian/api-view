@@ -22461,17 +22461,34 @@
 	  function Upload(props) {
 	    _classCallCheck(this, Upload);
 	
-	    return _possibleConstructorReturn(this, (Upload.__proto__ || Object.getPrototypeOf(Upload)).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Upload.__proto__ || Object.getPrototypeOf(Upload)).call(this, props));
+	
+	    _this.state = { infor: '' };
+	    _this.uploadvcf = _this.uploadvcf.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(Upload, [{
 	    key: 'uploadvcf',
-	    value: function uploadvcf() {
+	    value: function uploadvcf(e) {
+	      var _this2 = this;
+	
+	      e.preventDefault();
+	      this.setState({ infor: 'file is analyzing in back-end, please waiting.....' });
+	      var form = (0, _jquery2.default)('form')[0];
+	      var data = new FormData(form);
+	
 	      _jquery2.default.ajax({
 	        type: 'POST',
+	        encType: 'multipart/form-data',
+	        processData: false,
+	        contentType: false,
+	        cache: false,
 	        url: 'uploadvcf',
-	        data: (0, _jquery2.default)('form').serialize(),
-	        success: function success(response) {}
+	        data: data,
+	        success: function success(response) {
+	          _this2.setState({ infor: response });
+	        }
 	      });
 	    }
 	  }, {
@@ -22496,7 +22513,7 @@
 	              { className: 'col-md-8' },
 	              _react2.default.createElement(
 	                'form',
-	                { className: '', method: 'POST', action: 'uploadvcf', encType: 'multipart/form-data' },
+	                { className: '', method: 'POST' },
 	                _react2.default.createElement(
 	                  'div',
 	                  { className: 'form-group' },
@@ -22536,12 +22553,21 @@
 	                    'Submit'
 	                  )
 	                )
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement('h4', null)
 	              )
 	            ),
 	            _react2.default.createElement(
 	              'div',
 	              { className: 'col-md-8' },
-	              _react2.default.createElement('h4', { id: 'info' })
+	              _react2.default.createElement(
+	                'h4',
+	                { id: 'info' },
+	                this.state.infor
+	              )
 	            )
 	          )
 	        )

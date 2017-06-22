@@ -1,9 +1,16 @@
 package com.cloudhealth.view.service;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,6 +178,24 @@ public class PointServiceImpl implements PointService {
 	
 	public String handleTrioDiffAnalyze(String child,String father,String mother) {
 		return pointDao.handleTrioAnalyze(child, father, mother);
+	}
+	//upload file
+	public void uploadFile(String path) throws FileNotFoundException, IOException, IllegalArgumentException,SQLException {
+		BufferedReader br = null;
+	
+			if(path.contains("gz")) {
+				GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(path));
+				br = new BufferedReader(new InputStreamReader(gzip));
+			} else {
+				throw new IllegalArgumentException("file format is error");
+			}
+		try {	
+			pointDao.doStore(br);
+			
+		} finally {
+			br.close();
+		}
+			
 	}
 
 }

@@ -1,8 +1,8 @@
 package com.cloudhealth.view.dao;
 
+import java.io.BufferedReader;
 import java.math.BigInteger;
 import java.util.List;
-
 import com.cloudhealth.view.entity.AFPoint;
 import com.cloudhealth.view.entity.AnnovarPoint;
 import com.cloudhealth.view.entity.ClinvarPoint;
@@ -19,6 +19,8 @@ import com.cloudhealth.view.entity.TrioDiffGroup;
 import com.cloudhealth.view.entity.VarAnnoPoint;
 import com.cloudhealth.view.entity.VarAnnoPoint_history;
 import com.cloudhealth.view.model.VarAnnoReportPoint;
+
+import javassist.bytecode.analysis.Analyzer;
 
 public interface PointDao {
 
@@ -78,4 +80,7 @@ public interface PointDao {
 	
 	//handle TrioDiff Analyze
 	public String handleTrioAnalyze(String child,String father,String mother);
+	
+	//arg is bufferedReader  to put analyze data insert into db
+	public void doStore(BufferedReader br);
 }

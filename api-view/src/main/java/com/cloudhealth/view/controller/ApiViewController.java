@@ -1,14 +1,14 @@
 package com.cloudhealth.view.controller;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.persistence.IdClass;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +35,8 @@ public class ApiViewController {
 	
 	@Autowired
 	PointService pointService;
+	@Autowired
+	private HttpServletRequest request;
 	
 	@RequestMapping(value="/")
 	public String Query(Model model) {
@@ -45,7 +47,10 @@ public class ApiViewController {
 	}
 	
 	@RequestMapping("/range")
-	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, @RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, @RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno",defaultValue="ALL") String varAnnoGroupType, @RequestParam(value="hgmd",defaultValue="ALL") String hgmdType) {
+	public @ResponseBody HashMap<String,Object> listAFPoints(@RequestParam("sample") String sample, @RequestParam(value="chr",defaultValue="1") String chr, 
+			@RequestParam(value="start", defaultValue="0") Integer start, @RequestParam(value="end",defaultValue="0") Integer end,@RequestParam("offset") Integer offset, 
+			@RequestParam("maxResults") Integer maxResult, @RequestParam(value="varAnno",defaultValue="ALL") String varAnnoGroupType, 
+			@RequestParam(value="hgmd",defaultValue="ALL") String hgmdType) {
 		if("pl choose".equals(varAnnoGroupType))
 			varAnnoGroupType = "ALL";
 
@@ -278,33 +283,50 @@ public class ApiViewController {
 	
 	//TODO
 	@RequestMapping(value="uploadvcf", method=RequestMethod.POST)
-	public @ResponseBody String uploadFile(@RequestParam("name") String name, @RequestParam("file") MultipartFile file) {
-		if(! file.isEmpty()) {
-			try {
-				byte[] bytes= file.getBytes();
-				
-				//creating the directory to store file
-				String rootPath = System.getProperty("catalina.home");
-				File dir = new File(rootPath + File.separator + "tmpFiles");
-				if(! dir.exists())
-					dir.mkdirs();
-				
-				//create the file on server
-				File serverFile = new File(dir.getAbsolutePath() + File.separator + name);
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-				stream.write(bytes);
-				stream.flush();
-				stream.close();
-				
-				System.out.println("Server File Location=" + serverFile.getAbsolutePath());
-				
-				//TODO
-				return "You successfully upload file " + name;
-			} catch (Exception e) {
-				return "You failed to upload " + name + "=>" + e.getMessage();
+	public @ResponseBody String uploadFile(@RequestParam("files") MultipartFile[] files, HttpServletRequest request) {
+		
+		if(files != null && files.length>0) {
+			for(int i=0; i<files.length;i++) {
+				MultipartFile file = files[i];
+				try {
+					analyzeFile(file);
+					
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					return "file format is error";
+				} catch (Exception e) {
+					return "analyzing error when analyzing " + file.getOriginalFilename();
+				}
 			}
+			
+			return "upload successfully";
 		} else {
-			return "You failed to upload " + name + " because the file is empty";
+			return "You failed to upload because the files is empty";
+		}
+	}
+	
+	private void analyzeFile(MultipartFile file) throws Exception {
+		if(!file.isEmpty()) {
+			String filePath = request.getSession().getServletContext().getRealPath("/") + "upload/";
+			File dir = new File(filePath);
+			if(! dir.exists()) {
+				dir.mkdir();
+			}
+			
+			String path = filePath + file.getOriginalFilename();
+			File tempFile = null;
+			//save to the /upload path
+			try {
+				tempFile =  new File(path);
+				file.transferTo(tempFile);
+				//analyze the file
+				pointService.uploadFile(path);
+				
+				tempFile.delete();
+			} finally {
+				tempFile.delete();
+			}
+			
 		}
 	}
 	
