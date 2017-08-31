@@ -8,6 +8,6 @@
 </head>
 <body>
 <div id="app"></div>
-<script src='<c:url value="/web-resources/bundlebuilt/bundle.js" />'></script>
+<script src='<c:url value="/web-resources/builted/Upload.js" />'></script>
 </body>
 </html>
